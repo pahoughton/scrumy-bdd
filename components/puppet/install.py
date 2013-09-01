@@ -6,6 +6,11 @@ import subprocess
 import re
 import logging as log
 import argparse
+import os
+import filecmp
+import shutil
+import difflib
+
 
 def appOptions():
     '''setup and process command line options
@@ -23,10 +28,12 @@ class PMInstall(object):
     '''Puppet Master installation class
     '''
 
+    
     def __init__(self):
         '''Get puppet configuration values
         '''
         self.pcfg = {}
+        self.puppetModsFn = 'Puppetfile'
         
         self.puppetCfgFull = subprocess.check_output(['puppet',
                                                       'config',
@@ -52,25 +59,67 @@ class PMInstall(object):
         the modules as needed.
         '''
         pupModDirs = self.puppetCfg('modulepath').split(':')
-        pupLibModDir = pupModdirs[-1]
+        pupLibModDir = pupModDirs[-1]
         if 'etc' in pupLibModDir:
             raise Exception('the last puppet module path puppet contains etc modify your cofiguration before proceeding (Man puppet.conf)')
 
+        if not os.path.isdir(pupLibModDir):
+            raise Exception('module path dir does not exist: '+pupLibModDir)
         
+        pupModsInFn = self.puppetModsFn +'.in'
+        if not os.path.isfile(pupModsInFn):
+            raise Exception('input '+self.puppetModsFn+' missing')
         
-        
+        pupModsDestFn = os.path.join(pupLibModDir, self.puppetModsFn)
+        doInstall = False
+        if os.path.isfile(pupModsDestFn):
+            if filecmp.cmp(pupModsInFn,pupModsDestFn, shallow=False):
+                if os.path.getmtime(pupModsDestFn) > os.path.getmtime(pupModsInFn):
+                    print('Local changes made to %s: are being overwritten' % pupModsDestFn )
+                    
+                doInstall = True
+        else:
+            doInstall = True;
+            
+        if doInstall:
+            # simple copy for now - future, who knows but KISS
+            self.curdir = os.getcwd()
+            instModsCmd = ['librarian-puppet','install','--verbose']
+            os.chdir(pupLibModDir)
+            log.info('COPY: '+pupModsInFn,' to ',+pupModsDestFn)
+            with open(pupModsDestFn) as fromf:
+                fromlines = list(fromf)
+                
+            with open(pupModsInFn) as tof:
+                tolines = list(tof)
+                
+            diff = difflib.context_diff(fromlines, tolines, fromfile=pupModsDestFn, tofile=pupModsInFn)
+            diffmsg = ''
+            for line in diff:
+                diffmsg += line
+            log.info('DIFF:\n'+diffmsg)
+            log.info('RUNNIG: ',' '.join(instModsCmd))
+            if not dryRun:
+                shutil.copyfile(pupModsInFn,pupModsDestFn)
+                if subprocess.call(instModsCmd):
+                    raise Exception('FAILED: ',' '.join(instModsCmd))
+                log.info('done')
+            else:
+                log.info('skipped - DRYRUN')
+                
 
 def main():
     '''application entry point'''
     args = appOptions();
-    pminst = new PMInstall(!args.run)
-    
-    exit 0;
-    
-    
+    pminst = PMInstall()
     log.info('Starting installation / update')
+    pminst.updatePuppetModules(args.run == False)
+    log.info('Complete')
+    exit( 0 )
+    
+    
     
 if __name__ == '__main__':
-    log.basicConfig(level=logging.DEBUG)
-    
+    log.basicConfig(level=log.DEBUG)
+    main()
     
