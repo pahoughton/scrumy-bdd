@@ -1,0 +1,16 @@
+/etc/puppet
+/etc/puppet/auth.conf
+/etc/puppet/modules
+/etc/puppet/puppet.conf
+
+/etc/tmpfiles.d/puppet.conf
+/usr/bin/extlookup2hiera
+/usr/bin/puppet
+/usr/lib/systemd/system/puppetagent.service
+/usr/share/puppet/ext/systemd/puppetagent.service
+/usr/share/puppet/ext/systemd/puppetmaster.service
+
+So far, default config seems fine.
+
+Looky here, just what I need for fcgiwrap: 
+ExecStartPre=/usr/bin/install -d -o puppet -m 755 /run/puppet
