@@ -1,8 +1,13 @@
+#!/usr/bin/env python3
 '''
 Setup puppet in the puppet master host.
 
 '''
 import subprocess
+import os
+import logging as log
+
+import puppetcfg
 
 def setup():
     '''
@@ -26,8 +31,14 @@ def setup():
     if subprocess.call(cmd):
         raise Exception('FAILED: ' + ' '.join(cmd))
     
-
-
+    pcfg = puppetcfg.Cfg()
+    log.info('Puppet modules in: '+pcfg.libModDir())
+    os.chdir(pcfg.libModDir())
+    cmd = ['librarian-puppet','init']
+    if subprocess.call(cmd):
+        raise Exception('FAILED: ' + ' '.join(cmd))
         
-        # install via yum
-        
+if __name__ == '__main__':
+    log.basicConfig(level=log.DEBUG)
+    setup()
+    
