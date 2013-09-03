@@ -1,0 +1,6 @@
+fixtures:
+  repositories:
+    stdlib: "git://github.com/puppetlabs/puppetlabs-stdlib"
+    gcc: "git://github.com/puppetlabs/puppetlabs-gcc"
+  symlinks:
+    mymodule: "#{source_dir}"

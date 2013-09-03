@@ -1,3 +1,6 @@
 forge "http://forge.puppetlabs.com"
 
 mod "puppetlabs/stdlib"
+mod "puppetlabs/gcc"
+mod "puppetlabs/postgresql"
+mod "puppetlabs/nginx"

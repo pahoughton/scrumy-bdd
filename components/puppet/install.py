@@ -1,3 +1,4 @@
+#!/usr/bin/env ptyon3
 '''
 Full production installation of puppet master sysetm this will
 also install updates as needed
@@ -24,7 +25,7 @@ def appOptions():
                         help='shows will happen when run (default)')
     return parser.parse_args()
     
-class PMInstall(object):
+class PuppetModulesInstall(object):
     '''Puppet Master installation class
     '''
 
@@ -39,7 +40,7 @@ class PMInstall(object):
                                                       'config',
                                                       'print']).decode('utf-8')
         
-    def puppetCfg(self,varName):
+    def puppetCfgVal(self,varName):
         '''returns the value of the config variable as a string
 
         caching values as used.
@@ -58,7 +59,7 @@ class PMInstall(object):
         generate the puppet modules dir Puppetfile and install / update
         the modules as needed.
         '''
-        pupModDirs = self.puppetCfg('modulepath').split(':')
+        pupModDirs = self.puppetCfgVal('modulepath').split(':')
         pupLibModDir = pupModDirs[-1]
         if 'etc' in pupLibModDir:
             raise Exception('the last puppet module path puppet contains etc modify your cofiguration before proceeding (Man puppet.conf)')
@@ -107,11 +108,15 @@ class PMInstall(object):
             else:
                 log.info('skipped - DRYRUN')
                 
+    def updateManifests(self):
+        '''Update the puppet master's manifest
+        '''
+        
 
 def main():
     '''application entry point'''
     args = appOptions();
-    pminst = PMInstall()
+    pminst = PuppetModulesInstall()
     log.info('Starting installation / update')
     pminst.updatePuppetModules(args.run == False)
     log.info('Complete')
