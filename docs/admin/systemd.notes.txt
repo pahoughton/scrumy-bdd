@@ -1,0 +1,63 @@
+Source:
+http://www.linux.com/learn/tutorials/527639-managing-services-on-linux-with-systemd
+
+nmap -sT -O localhost
+
+systemctl # shows status
+
+systemctl status SERVICE
+
+ps xaf -eo pid,user,cgroup,args
+
+alias psc='ps xawf -eo pid,user,cgroup,args'
+
+systemd-cgls
+
+/etc/systemd/system/abrtd.service
+systemctl daemon-reload
+systemctl start abrtd.service
+systemctl enable abrtd.service
+
+systemctl kill -s SIGKILL crond.service
+
+systemctl kill -s HUP --kill-who=main crond.service
+
+systemd-nspawn # for chroot type situations.
+
+ReadOnlyDirectories=, InaccessibleDirectories= might be suitable alternatives to a full chroot() environment.
+RootDirectory= is your friend if you want to chroot() a specific service.
+
+systemd-analyze blame
+
+systemd-analyze plot > plot.svg
+eog plot.svg
+
+
+Change plymouth theme (boot up screen)
+
+changes to /usr/lib/systemd/system/* may be overriden by package
+upadates. Only modifications in /etc/systemd/system are secure from
+package updates. (But be sure you still want those changes during an
+update).
+
+Good Practice. look for changes in /usr/lib/systemd/ when updates are
+made and verify you modifications are still appropriate.
+
+Automate this!
+
+
+https://github.com/carlasouza/puppet-virt - pupet configuration and
+system virtualization.
+
+I hade to replace /boot/efi/EFI/fedora/grub.cfg using
+grub2-mkconfig -o /boot/efi/EFI/fedora/grub.cfg
+
+to get Xen to show up on the grub boot menu.
+
+Do NOT lvreduce before resize2fs (but maybe w/ the resize option would
+work.
+
+To single user boot e the boot line and add init 1 to the modules
+line. (the one with all the boot params)
+
+mount -r -t iso9660 -o loop image_name.iso /media/cdrom/
