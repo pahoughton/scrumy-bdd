@@ -22,4 +22,15 @@ describe 'profile::bkup_server' do
     should contain_service('bacula-fd')
   end
 
+#  GRANT CONNECT ON DATABASE bacula TO pgtest;
+#  GRANT SELECT ON ALL TABLES IN SCHEMA public TO pgtest;
+
+  it 'should grant read access to pgtest user' do
+    FAIL FIXME
+  end
+  
+  it 'should grant read access to pgadmin user' do
+    FAIL FIXME
+  end
+  
 end
