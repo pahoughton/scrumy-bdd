@@ -1,7 +1,4 @@
-# www bugzilla provider Fix dependancy issue
+# bugzilla - Nothing - moving to trac for now.
 class profile::bugzilla {
-  #class { 'postgres': }
-  class { 'profile::www': }
-  #class { 'fcgiwrap': }
-  #class { 'bugzilla': }
+  fail('bad thing')
 }
