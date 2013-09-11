@@ -16,6 +16,7 @@ class profile::postgresql {
     createrole    => true,
     require       => Class['postgresql::server'],
   }
+
   postgresql::database_user  { 'pgtest' :
     password_hash => postgresql_password('pgtest',extlookup('pgtest_pass')),
     require       => Class['postgresql::server'],

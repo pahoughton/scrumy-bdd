@@ -1,0 +1,4 @@
+# gitolite class
+class gitolite {
+
+}
