@@ -12,4 +12,9 @@ class profile {
     ensure => 'stopped',
     enable => false
   }
+  $admin_email = 'paul4hough@gmail.com'
+  file { '/etc/logwatch/conf/logwatch.conf' :
+    ensure => 'exists',
+    content => template('profile/logwatch.conf.erb')
+  }
 }

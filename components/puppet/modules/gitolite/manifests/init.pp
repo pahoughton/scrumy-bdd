@@ -1,4 +1,6 @@
 # gitolite class
-class gitolite {
+class gitolite (
+  $user='git'
+) {
 
 }

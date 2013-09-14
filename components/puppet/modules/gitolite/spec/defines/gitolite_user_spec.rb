@@ -15,13 +15,13 @@ describe 'gitolite::user', :type => 'define' do
 
   it 'should run the git clone as needed' do
     should contain_exec('git clone').with(
-      'command' => 'git clone git@localhost:gitolite-admin',
+      'command' => 'git clone git@localhost:gitolite-admin'
     )
   end
 
   it 'should run the git pull to update gitolite-admin directory' do
     should contain_exec('git push').with(
-      'command' => 'git push',
+      'command' => 'git push'
     )
   end
 

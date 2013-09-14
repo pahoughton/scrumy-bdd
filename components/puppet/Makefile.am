@@ -1,3 +1,7 @@
+MOD_SUBDIRS		=		\
+	modules/profile		\
+	modules/gitolite
+	
 default:
 
 all:
@@ -13,7 +17,7 @@ test:
 		| xargs -0t -n1 -P2 puppet parser validate
 	find modules/*/templates/ -maxdepth 1 -type f -not -name .svn \
   		| xargs -n1 sh -c 'erb -x -T - $$1 | ruby -c 2>&1 | sed -e "s,^,$$1: ,"' -
-	cd modules/profile && rake spec_prep && rake test
-
-	echo "3 tests passed"
+	for sd in ${MOD_SUBDIRS}; do \
+	  pushd $$sd && rake spec_prep && rake test || exit 1; popd; \
+	done
 

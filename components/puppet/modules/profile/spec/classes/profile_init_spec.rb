@@ -13,7 +13,7 @@ describe 'profile' do
   end
 
   it 'should configure logwatch to email output' do
-    should contain_file('/etc/logwatch/conf').
+    should contain_file('/etc/logwatch/conf/logwatch.conf').
       with_content(/Output = mail/).
       with_content(/MailTo = paul4hough@gmail.com/)
   end
