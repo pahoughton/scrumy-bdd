@@ -9,3 +9,4 @@ config.status
 configure
 Makefile.in
 aclocal.m4
+.make.needs.timestamp

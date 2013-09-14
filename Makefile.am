@@ -3,10 +3,11 @@ SUBDIRS = components/puppet tests
 
 needs:
 	puppet apply deps.pp
+	echo timestamp > .make.needs.timestamp
 		
 test: check
 
-check:
+check: .make.needs.timestamp
 
 # just experimenting
 #TESTS = TopTest

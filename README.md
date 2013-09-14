@@ -16,13 +16,15 @@ via ./deps.pp.
 	python 2.7.5: yum install python
 	python 3.3: yum install python3
 	
+All other dependancies are handled by puppet. See deps.pp and make needs target.
+	
 Installation
 ============
 
 	yum install autoconf
 	autoreconf
 	configure
-	make need
+	make needs
 	make test (synonym for check)
 	make install
 	
