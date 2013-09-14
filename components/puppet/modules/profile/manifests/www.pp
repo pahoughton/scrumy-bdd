@@ -25,7 +25,7 @@ class profile::www {
 
   service { 'nginx' :
     ensure  => running,
-    enable => true,
+    enable  => true,
     require => [ File["${nginx_cfg_dir}/nginx.conf"], Package['nginx'] ],
   }
 }

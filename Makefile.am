@@ -1,6 +1,13 @@
 AUTOMAKE_OPTIONS = foreign
 SUBDIRS = components/puppet tests
 
+needs:
+	puppet apply deps.pp
+		
+test: check
+
+check:
+
 # just experimenting
 #TESTS = TopTest
 #

@@ -1,11 +1,14 @@
 # devel base profile
 class profile::trac {
 
+  $trac_fcgi_skdir = '/var/run/fcgi_nginx/'
+  $trac_fcgi_socket_fn = "${trac_fcgi_skdir}/fcgi_nginx_trac.sock"
+
   user { 'trac' :
     ensure   => 'present',
     comment  => 'Trac Project Wiki',
     gid      => 'nginx',
-    groups   => 'trac',
+    groups   => 'git',
     home     => '/home/trac',
   }
   ->
@@ -51,38 +54,35 @@ class profile::trac {
   ->
   file { '/etc/trac' :
     ensure   => 'directory',
-    ownwer   => 'trac',
+    owner    => 'trac',
     mode     => '0755',
   }
   ->
   file { '/etc/trac/plugins.d' :
     ensure   => 'directory',
-    ownwer   => 'trac',
+    owner    => 'trac',
     mode     => '0755',
   }
   ->
   file { '/etc/trac/templates.d' :
     ensure   => 'directory',
-    ownwer   => 'trac',
+    owner    => 'trac',
     mode     => '0755',
   }
 
   file { '/etc/trac/enterprise-review-workflow.ini' :
     ensure  => 'exists',
-    ownwer  => 'trac',
+    owner   => 'trac',
     mode    => '0644',
     require => File['/etc/trac'],
   }
 
   file { '/etc/trac/trac.ini' :
     ensure  => 'exists',
-    ownwer  => 'trac',
+    owner   => 'trac',
     mode    => '0644',
     require => File['/etc/trac'],
   }
-
-  $trac_fcgi_skdir = '/var/run/fcgi_nginx/'
-  $trac_fcgi_socket_fn = "${trac_fcgi_skdir}/fcgi_nginx_trac.sock"
 
   file { '/etc/nginx/locs.d/trac.conf' :
     ensure  => 'exists',

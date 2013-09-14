@@ -32,7 +32,7 @@ class Cfg (object):
             raise Exception('the last puppet module path puppet contains etc modify your cofiguration before proceeding (Man puppet.conf)')
 
         if len(pupLibModDir) < 5:
-            raise Exception('module path too short (<5chars): '+pubLibModDir)
+            raise Exception('module path too short (<5chars): '+pupLibModDir)
         
         if not os.path.isdir(pupLibModDir):
             raise Exception('module path dir does not exist: '+pupLibModDir)

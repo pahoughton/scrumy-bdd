@@ -1,11 +1,7 @@
 #
-# Setup a host to be capable of testing these modules and manifests
+# TestHost dependencies
 #
 node default {
-  package { 'puppet' :
-    ensure   => 'installed',
-    provider => 'gem',
-  }
   package { 'rspec-puppet' :
     ensure   => 'installed',
     provider => 'gem',
@@ -17,5 +13,29 @@ node default {
   package { 'puppet-lint' :
     ensure   => 'installed',
     provider => 'gem',
+  }
+  package { 'python' : 
+    ensure   => 'installed',
+  }
+  package { 'python-nose' : 
+    ensure   => 'installed',
+  }
+  package { 'python-nose-cover3' : 
+    ensure   => 'installed',
+  }
+  package { 'python-nose-exclude' : 
+    ensure   => 'installed',
+  }
+  package { 'python3' : 
+    ensure   => 'installed',
+  }
+  package { 'python3-nose' : 
+    ensure   => 'installed',
+  }
+  package { 'python3-nose-cover3' : 
+    ensure   => 'installed',
+  }
+  package { 'python3-nose-exclude' : 
+    ensure   => 'installed',
   }
 }

@@ -21,7 +21,7 @@ describe 'profile::trac' do
       'ensure'  => 'directory',
       'owner'   => 'trac',
       'group'   => 'nginx',
-      'mode'    => '0755',
+      'mode'    => '0755'
     )
   end
 
@@ -49,7 +49,7 @@ describe 'profile::trac' do
 
   it 'should create a trac_fcgi.service file' do
     should contain_file('/usr/lib/systemd/system/trac_fcgi.service').
-      with_content(/User=nginx/).
+      with_content(/User=trac/).
       with_content(/Group=nginx/).
       with_content(/UMask=006/).
       with_content(/fcgi_nginx_trac.sock/).
@@ -74,28 +74,28 @@ describe 'profile::trac' do
     should contain_file('/etc/trac').with(
       'ensure'  => 'directory',
       'owner'   => 'trac',
-      'mode'    => '0755',
+      'mode'    => '0755'
     )
     should contain_file('/etc/trac/plugins.d').with(
       'ensure'  => 'directory',
       'owner'   => 'trac',
-      'mode'    => '0755',
+      'mode'    => '0755'
     )
     should contain_file('/etc/trac/templates.d').with(
       'ensure'  => 'directory',
       'owner'   => 'trac',
-      'mode'    => '0755',
+      'mode'    => '0755'
     )
     should contain_file('/etc/trac/trac.ini').with(
       'ensure'  => 'exists',
       'owner'   => 'trac',
-      'mode'    => '0644',
+      'mode'    => '0644'
     )
     should contain_file('/etc/trac/enterprise-review-workflow.ini').with(
       'ensure'  => 'exists',
       'owner'   => 'trac',
-      'mode'    => '0644',
+      'mode'    => '0644'
     )
-    
+  end
 
 end

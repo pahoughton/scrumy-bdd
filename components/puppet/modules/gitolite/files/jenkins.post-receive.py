@@ -71,7 +71,7 @@ import subprocess
 JENKINS_URL = 'http://cworld.local/jenkins'
 
 def show_post_receive_env():
-    '''
+    '''For testing / debugging only
     Show the user that did the push all the values available to the post-receive hook
     
     Values may be args (none expected), environment variables and read from stdin
@@ -97,8 +97,27 @@ def get_branches():
 
     return branches
 
-def notify_jenkins(branches):
-    '''Send notification to jenkins of the push
+def git_config(repoVar):
+    '''return the value from a git config variable
+    
+    This is able to retrieve gitolite repo variables when
+    the script is a gitolite hook.
+    '''
+    #print('ENV GIT_CONFIG:',os.environ['GIT_CONFIG'])
+    cfgVal = None
+    try:
+        cfgVal = subprocess.check_output(['git',
+                                          'config',
+                                          '--get',
+                                          repoVar]
+                                         ).decode('utf-8').strip()
+    except:
+        pass
+    
+    return cfgVal
+
+def notify_jenkins(jenkinsUrl, branches):
+    '''Send notification to jenkinsUrl of the push
     
     Format: http://yourserver/jenkins/git/notifyCommit
                  ?url=<URL of the Git repository>[&branches=branch1[,branch2]*]
@@ -109,45 +128,64 @@ def notify_jenkins(branches):
     
     Exmaple gitolite.conf repo entry
     repo @all
+    
+    repo myproduct.git
         config jenkins.url = http://cworld.local/jenkins
         config gitolite.url = git@cworld.local
+        config jenkins.build.job = MYPRODUCT%20BUILD
+        config jenkins.build.token = MYTOKEN
+    
+    Both jenkins.build.job and jenkins.build.token are provided by the 
+    build configuration that will be signaled by the push.
     
     Also need to edit $GL_GITCONFIG_KEYS variable in ~/.gitolite.rc. on gitolite server
     
     
     '''
-    uriBranchStr = ''
-    if len(branches):
-        uriBranchStr = '&branches='+','.join(branches)
+    gitoliteUrl = git_config('gitolite.url')
+    jenkinsBuildJob = git_config('jenkins.build.job')
+    jenkinsBuildToken = git_config('jenkins.build.token')
     
-    reqUrl = ''
-    # note: GitPython does not work with python3
-    reqUrl += subprocess.check_output(['git',
-                                       'config',
-                                        '--get',
-                                        'jenkins.url']
-                                      ).decode('utf-8').strip()
-    reqUrl += '/git/notifyCommit?url='
-              
-    reqUrl += subprocess.check_output(['git',
-                                       'config',
-                                       '--get',
-                                       'gitolite.url']
-                                      ).decode('utf-8').strip()
-            
-    reqUrl += ':' + os.environ.get('GL_REPO')
-    reqUrl += uriBranchStr
 
-    resp = urllib.request.urlopen(reqUrl)
-    if resp.status != 200:
-        raise Exception('jenkins request failed: '+reqUrl + str(resp.status))
+    reqUrl = jenkinsUrl
+    if jenkinsBuildJob and jenkinsBuildToken:
+        # this url is directly from the jenkins job definition
+        reqUrl += '/job/'+jenkinsBuildJob
+        reqUrl += '/build?token='+jenkinsBuildToken
+        reqUrl += '&cause=Cause+git+push'
+    elif gitoliteUrl:
+        # this url is from the git jenkins plugin
+        # note: GitPython does not work with python3
+        reqUrl += '/git/notifyCommit?url=' + gitoliteUrl
+        reqUrl += ':' + os.environ.get('GL_REPO')
+        if len(branches):
+            reqUrl += '&branches='+','.join(branches)
+    else:
+        reqUrl = None
         
-    print('Jenkins notified via: '+reqUrl)
-    
+    #print('ReqUrl:',reqUrl)
+    if reqUrl:
+        resp = urllib.request.urlopen(reqUrl)
+        if resp.status != 200:
+            raise Exception('jenkins request failed: '+reqUrl + str(resp.status))
+            
+        print('Jenkins notified via:',
+              reqUrl,
+              'response was:',
+              resp.read()
+              )
+    else:
+        print( 'Repo not configured for continuous integration.' )
+
     
 def main():
-     blist = get_branches()
-     notify_jenkins(blist)
+    jenkinsUrl = git_config('jenkins.url')
+    if not jenkinsUrl or 'http' not in jenkinsUrl :
+        print( 'Repo not configured for continuous integration.' )
+    else:
+        print('JURL:',jenkinsUrl)
+        blist = get_branches()
+        notify_jenkins(jenkinsUrl,blist)
      
      
 if __name__ == '__main__':

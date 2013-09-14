@@ -21,24 +21,23 @@ define gitolite::user (
     require => File['/home/git/admin'],
   }
 
-  file { '${gl_admin_dir}' : 
+  file { $gl_admin_dir :
     require => Exec['git clone'],
   }
 
-  file { '${gl_admin_dir}/keydir' :
-    require => [ File['${gl_admin_dir}'],
-                 Exec['git pull'],
-               ]
+  file { "${gl_admin_dir}/keydir" :
+    require => [File[$gl_admin_dir],
+                Exec['git pull'],]
   }
 
   exec { 'git add' :
-    command => 'git add ${name}.pub',
-    cwd     => '${gl_admin_dir}/keydir',
+    command => "git add ${name}.pub",
+    cwd     => "${gl_admin_dir}/keydir",
   }
   ->
   exec { 'git commit' :
     command => "git commit -m 'Added ${name}'",
-    cwd     => '${gl_admin_dir}/keydir',
+    cwd     => "${gl_admin_dir}/keydir",
   }
   ->
   exec { 'git push' :
@@ -48,7 +47,7 @@ define gitolite::user (
 
   file { "${gl_admin_dir}/keydir/${name}.pub" :
     ensure => 'exists',
-    source => "/home/$name/.ssh/id_rsa.pub",
+    source => "/home/${name}/.ssh/id_rsa.pub",
     owner  => 'git',
     notify => Exec['git push'],
   }

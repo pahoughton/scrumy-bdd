@@ -1,6 +1,2 @@
-all:
-
-check: test
-
-test:
-	echo "No tests here yet"
+AUTOMAKE_OPTIONS = foreign
+SUBDIRS = src

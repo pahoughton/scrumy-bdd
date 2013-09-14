@@ -5,11 +5,11 @@ describe 'profile' do
     should contain_package('xterm').with_ensure('installed')
   end
   
-  it 'should stop the finger print service (fprintd)' do
-    FAIL FIXME
+  it 'should stop and disable the finger print service (fprintd)' do
+    should contain_service('fprintd').with(
+      'ensure' => 'stopped',
+      'enable' => false
+    )
   end
   
-  it 'should disable the finger print service (fprintd)' do
-    FAIL FIXME
-  end
 end

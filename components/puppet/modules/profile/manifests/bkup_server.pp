@@ -56,19 +56,35 @@ class profile::bkup_server {
     require => Package['bacula-console'],
   }
 
+  postgresql::database_user  { 'bacula' :
+    password_hash => postgresql_password('bacula',$bacula_db_pass),
+    createdb      => true,
+    require       => Class['postgresql::server'],
+  }
+  postgresql::db { 'bacula' :
+    user     => 'bacula',
+    password => $bacula_db_pass,
+    require  => Postgresql__datatbase_user['bacula'],
+  }
+  postgresql::grant { 'bacula-pgadmin' :
+    role      => 'pgadmin',
+    db        => 'bacula',
+    privilege => 'CONNECT'
+  }
+
   service { 'bacula-dir' :
-    ensure => running,
-    enable => true,
+    ensure  => running,
+    enable  => true,
     require => File["${bacula_conf_dir}/bacula-dir.conf"],
   }
   service { 'bacula-sd' :
-    ensure => running,
-    enable => true,
+    ensure  => running,
+    enable  => true,
     require => File["${bacula_conf_dir}/bacula-sd.conf"],
   }
   service { 'bacula-fd' :
-    ensure => running,
-    enable => true,
+    ensure  => running,
+    enable  => true,
     require => File["${bacula_conf_dir}/bacula-fd.conf"],
   }
 }

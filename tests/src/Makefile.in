@@ -1,2 +1,4 @@
+check: test
+
 test:
-	python main.py
+	nosetests-3.3 --with-coverage3

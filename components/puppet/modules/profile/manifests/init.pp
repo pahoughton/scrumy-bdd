@@ -8,4 +8,8 @@ class profile {
   package { 'xterm' :
     ensure => 'installed'
   }
+  service { 'fprintd' :
+    ensure => 'stopped',
+    enable => false
+  }
 }

@@ -1,6 +1,11 @@
 require 'spec_helper'
 
 describe 'profile::bkup_server' do
+  let(:facts) {{
+    :osfamily                 => 'RedHat',
+    :postgres_default_version => '9.2',
+    :concat_basedir           => '/var/lib/puppet/concat',
+  }}
 
   it 'should ensure bacula dir, sd and fd and console installed' do
     should contain_package('bacula-director')
@@ -17,20 +22,33 @@ describe 'profile::bkup_server' do
   end
 
   it 'should start bacula services (dir,sd &  fd)' do
-    should contain_service('bacula-dir')
+    should contain_service('bacula-dir').with(
+      'ensure'  => 'running',
+      'enable'  => true
+    )
     should contain_service('bacula-sd')
     should contain_service('bacula-fd')
   end
 
-#  GRANT CONNECT ON DATABASE bacula TO pgtest;
-#  GRANT SELECT ON ALL TABLES IN SCHEMA public TO pgtest;
-
-  it 'should grant read access to pgtest user' do
-    FAIL FIXME
+  it 'should create the bacula postgresql user as needed' do
+    should contain_postgresql__database_user('bacula').with(
+      'createdb'    => true,
+      'createrole'  => false
+    )
   end
   
+  it 'should create the bacula postgresql db as needed' do
+    should contain_postgresql__db('bacula').with(
+      'user'    => 'bacula'
+    )
+  end
+
   it 'should grant read access to pgadmin user' do
-    FAIL FIXME
+    should contain_postgresql__grant('bacula-pgadmin').with(
+      'role'      => 'pgadmin',
+      'db'        => 'bacula',
+      'privilege' => 'CONNECT'
+    )
   end
   
 end
