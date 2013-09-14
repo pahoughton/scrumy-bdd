@@ -11,5 +11,11 @@ describe 'profile' do
       'enable' => false
     )
   end
-  
+
+  it 'should configure logwatch to email output' do
+    should contain_file('/etc/logwatch/conf').
+      with_content(/Output = mail/).
+      with_content(/MailTo = paul4hough@gmail.com/)
+  end
+
 end
