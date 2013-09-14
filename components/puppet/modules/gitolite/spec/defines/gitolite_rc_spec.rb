@@ -15,7 +15,6 @@ describe 'gitolite::rc', :type => 'define' do
       with_content(/GIT_CONFIG_KEYS\s+=>\s+''/).
       with_content(/LOG_EXTRA\s+=>\s+1/).
       with_content(/SITE_INFO\s+=>\s+'Welcome to gitolite on cworld \(cworld.smk.com\).'/)
-      #SITE_INFO                 =>  'Welcome to gitolite on cworld (cworld.smk.com).',
     end
   end
   context 'with jenkins config keys' do
