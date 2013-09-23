@@ -45,7 +45,6 @@ made and verify you modifications are still appropriate.
 
 Automate this!
 
-
 https://github.com/carlasouza/puppet-virt - pupet configuration and
 system virtualization.
 
