@@ -9,17 +9,6 @@ test: check
 
 check: .make.needs.timestamp
 
-# just experimenting
-#TESTS = TopTest
-#
-#TopTest:
-#	echo no toplevel tests
-#
-#TESTS = Youfail
-#YOUFAIL_LOG_COMPILER = echo
-#AM_YOUFAIL_LOG_FLAGS = flag flag2
-
-#check:: check-TESTS
-
-#pah_special:
-#	cd /tmp; pwd; exit 1
+system-test:
+	echo 'Not implemented'
+	exit 1
