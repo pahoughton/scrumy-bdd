@@ -51,7 +51,6 @@ system virtualization.
 
 I hade to replace /boot/efi/EFI/fedora/grub.cfg using
 grub2-mkconfig -o /boot/efi/EFI/fedora/grub.cfg
-
 to get Xen to show up on the grub boot menu.
 
 Do NOT lvreduce before resize2fs (but maybe w/ the resize option would
