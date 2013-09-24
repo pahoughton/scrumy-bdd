@@ -1,8 +1,8 @@
 # devel base profile
 class profile::trac {
 
-  $trac_fcgi_skdir = '/var/run/fcgi_nginx/'
-  $trac_fcgi_socket_fn = "${trac_fcgi_skdir}/fcgi_nginx_trac.sock"
+  $tracd_skdir = '/var/run/nginx/'
+  $tracd_socket_fn = "${tracd_skdir}/tracd-dispatch.sock"
 
   user { 'trac' :
     ensure   => 'present',
@@ -89,9 +89,9 @@ class profile::trac {
     content => template('profile/nginx_trac_loc.conf.erb'),
   }
 
-  file { '/usr/lib/systemd/system/trac_fcgi.service' :
+  file { '/usr/lib/systemd/system/tracd.service' :
     ensure  => 'exists',
-    content => template('profile/trac_fcgi.service.erb')
+    content => template('profile/tracd.service.erb')
   }
 
   # Note: trac db string: postgres://trac:pgsql@localhost/DBNAME
@@ -102,9 +102,9 @@ class profile::trac {
   }
 
 
-  service { 'trac_fcgi' :
+  service { 'tracd' :
     ensure   => 'running',
     enable   => true,
-    require  => File['/usr/lib/systemd/system/trac_fcgi.service'],
+    require  => File['/usr/lib/systemd/system/tracd.service'],
   }
 }
