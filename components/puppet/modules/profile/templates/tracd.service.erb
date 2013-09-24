@@ -4,7 +4,7 @@
 # systemd.service(5) file for trac_fcgi.py
 
 [Unit]
-Description=Fast cgi service for trac
+Description=trac wiki ticketing system
 After=syslog.target network.target remote-fs.target nss-lookup.target
 
 [Service]
@@ -14,7 +14,4 @@ User=trac
 Group=nginx
 UMask=006
 
-ExecStartPre=/usr/bin/install -d -o nginx -g nginx -m 775 <%= @trac_fcgi_skdir %>
-ExecStartPre=/usr/bin/install -d -o trac -g nginx -m 775 /var/log/trac
-
-ExecStart= /usr/sbin/tracd --protocol=fcgi --env-parent-dir=/home/trac/products --base-path=/trac --auth=*,/home/trac/.tracdigest,smk --hostname=<%= @trac_fcgi_socket_fn %>
+ExecStart= /usr/sbin/tracd --protocol=fcgi --env-parent-dir=/home/trac/products --base-path=/trac --auth=*,/home/trac/.tracdigest,smk --hostname=<%= @tracd_socket_fn %>
