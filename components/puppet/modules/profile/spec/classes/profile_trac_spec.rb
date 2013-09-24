@@ -98,4 +98,12 @@ describe 'profile::trac' do
     )
   end
 
+  it 'install\'s http://trac-hacks.org/wiki/AcronymsPlugin plugin' do
+    should contain_file('JUNK')
+  end
+
+  it 'install\'s includemacro' do
+    should contain_file('JUNK')
+  end
+
 end
