@@ -29,4 +29,8 @@ describe 'profile::www' do
     })
   end
 
+  it 'should create the tmpfile conf for unix sockets directory' do
+    should contain_file('/etc/tmpfiles.d/nginx.conf').
+      with_content(/d\s+\/var\/run\/nginx\s+0775\s+nginx\s+nginx/)
+  end
 end
