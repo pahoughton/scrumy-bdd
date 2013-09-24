@@ -2,7 +2,7 @@ AUTOMAKE_OPTIONS = foreign
 SUBDIRS = components/puppet tests
 
 needs:
-	puppet apply deps.pp
+	./deps.py
 	echo timestamp > .make.needs.timestamp
 		
 test: check
