@@ -1,3 +1,5 @@
+ Add plugin http://trac-hacks.org/wiki/HudsonTracPlugin
+
 # devel base profile
 class profile::trac {
 

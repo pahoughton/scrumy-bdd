@@ -1,13 +1,26 @@
 AUTOMAKE_OPTIONS = foreign
 SUBDIRS = components/puppet tests
 
+check-recursive: .make.needs.timestamp
+
+.make.needs.timestamp:
+	echo "As root enter make needs. This will install all this"
+	echo "product's dependancies via the deps.pp puppet script"
+	exit 1
+
 needs:
+	puppet parser validate deps.pp
 	puppet apply deps.pp
-	echo timestamp > .make.needs.timestamp
-		
+	echo timestamp= > .make.needs.timestamp
+
 test: check
 
-check: .make.needs.timestamp
+virttest:
+	$(MAKE) -C test/virt $@
+
+.PHONY: needs
+
+#check: 
 
 # just experimenting
 #TESTS = TopTest

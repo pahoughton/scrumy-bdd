@@ -2,11 +2,13 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([TestHost], [0.1], [paul4hough@gmail.com])
+AC_INIT([TestHost],[0.1],[paul4hough@gmail.com])
 AM_INIT_AUTOMAKE
 
 # Checks for programs.
 AC_PROG_MAKE_SET
+
+AC_PATH_PROG([PUPPET],[puppet])
 
 # Checks for libraries.
 
@@ -16,8 +18,21 @@ AC_PROG_MAKE_SET
 
 # Checks for library functions.
 
+if test -z "$PUPPET"  ; then 
+  AC_MSG_ERROR("ERROR: puppet required. Please follow these install instructions:
+http://docs.puppetlabs.com/guides/puppetlabs_package_repositories.html
+")
+fi
+
 AC_CONFIG_FILES([Makefile
                  components/puppet/Makefile
                  tests/Makefile
+		 tests/virt/Makefile
                  tests/src/Makefile])
 AC_OUTPUT
+
+AC_MSG_NOTICE(
+
+The next step is to run 'sudo make needs'
+This runs puppet apply deps.pp to install packages require by this product
+)
