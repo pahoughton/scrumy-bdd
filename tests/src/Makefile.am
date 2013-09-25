@@ -1,0 +1,5 @@
+
+check: test
+
+test:
+	nosetests-3.3 --with-coverage3

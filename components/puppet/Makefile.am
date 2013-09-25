@@ -11,8 +11,6 @@ install: test
 check: test
 
 test:
-<<<<<<< HEAD
-=======
 	find modules manifests -name '*.pp' -not \
 	    -path '*spec/fixtures/modules*' -print0 \
 	  | xargs -0t -n1 -P2 puppet-lint --with-filename 

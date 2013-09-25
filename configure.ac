@@ -32,7 +32,9 @@ AC_CONFIG_FILES([Makefile
 AC_OUTPUT
 
 AC_MSG_NOTICE(
-
-The next step is to run 'sudo make needs'
-This runs puppet apply deps.pp to install packages require by this product
+ * * * * * * * * * * * * * * * * * * * * * *
+ 
+ The next step is to run 'sudo make needs'
+ This runs the deps.py script to install packages required
+ by scrumy-bdd
 )
