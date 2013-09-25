@@ -34,7 +34,7 @@ describe 'profile::trac' do
 #     should contain_file('/home/trac/.ssh/id_rsa.pub')
 #   end
 
-  it 'should add the trac user to gitolite' do 
+  it 'should add the trac user to gitolite' do
     should contain_gitolite__user('trac')
   end
 

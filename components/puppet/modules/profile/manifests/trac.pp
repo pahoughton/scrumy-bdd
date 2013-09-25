@@ -103,7 +103,6 @@ class profile::trac {
     require       => Class['postgresql::server'],
   }
 
-
   service { 'tracd' :
     ensure   => 'running',
     enable   => true,

@@ -22,12 +22,12 @@ describe 'profile::jenkins' do
 
   it 'configure libvirt for jenkins access' do
     should contain_file('/etc/polkit-1/localauthority/50-local.d/jenkins-virtd.pkla' ).
-      with_content(/[Allow jenkins libvirt clone permission]/).
-      with_content(/Identity=unix-user:jenkins]/).
-      with_content(/Action=org.libvirt.unix.manage]/).
-      with_content(/ResultAny=yes]/).
-      with_content(/ResultInactive=yes]/).
-      with_content(/ResultActive=yes]/)
+      with_content(/Allow jenkins libvirt clone permission/).
+      with_content(/Identity=unix-user:jenkins/).
+      with_content(/Action=org.libvirt.unix.manage/).
+      with_content(/ResultAny=yes/).
+      with_content(/ResultInactive=yes/).
+      with_content(/ResultActive=yes/)
   end
 
   it 'install libvirt-slave plugin' do

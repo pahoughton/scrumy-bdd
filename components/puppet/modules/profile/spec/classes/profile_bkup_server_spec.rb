@@ -36,7 +36,7 @@ describe 'profile::bkup_server' do
       'createrole'  => false
     )
   end
-  
+
   it 'should create the bacula postgresql db as needed' do
     should contain_postgresql__db('bacula').with(
       'user'    => 'bacula'
@@ -50,5 +50,5 @@ describe 'profile::bkup_server' do
       'privilege' => 'CONNECT'
     )
   end
-  
+
 end
