@@ -9,10 +9,9 @@ check-recursive: .make.needs.timestamp
 	exit 1
 
 needs:
-	puppet parser validate deps.pp
-	puppet apply deps.pp
-	echo timestamp= > .make.needs.timestamp
-
+	./deps.py
+	echo timestamp > .make.needs.timestamp
+		
 test: check
 
 virttest:
