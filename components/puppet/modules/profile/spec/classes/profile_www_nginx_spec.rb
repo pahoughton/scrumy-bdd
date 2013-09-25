@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'profile::www' do
+describe 'profile::www_nginx' do
 
   it 'should ensure nginx present' do
     should contain_package( 'nginx' ).with({
