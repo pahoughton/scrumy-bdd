@@ -1,7 +1,7 @@
 AUTOMAKE_OPTIONS = foreign
 SUBDIRS = components/puppet tests
 
-check-recursive: .make.needs.timestamp
+all-recursive: .make.needs.timestamp
 
 .make.needs.timestamp:
 	echo "As root enter make needs. This will install all this"
@@ -11,15 +11,20 @@ check-recursive: .make.needs.timestamp
 needs:
 	./deps.py
 	echo timestamp > .make.needs.timestamp
-		
+
 test: check
 
-virttest:
-	$(MAKE) -C test/virt $@
+check-ignore: check-ignore-recursive
 
-.PHONY: needs
+test-ignore: check-ignore
 
-#check: 
+system-test:
+	$(MAKE) -C test/system $@
+
+.PHONY: needs test system-test test-ignore check-ignore
+
+
+#check:
 
 # just experimenting
 #TESTS = TopTest

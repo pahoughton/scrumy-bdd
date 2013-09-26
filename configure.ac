@@ -8,7 +8,7 @@ AM_INIT_AUTOMAKE
 # Checks for programs.
 AC_PROG_MAKE_SET
 
-AC_PATH_PROG([PUPPET],[puppet])
+AC_PATH_PROG([PUPPET],[puppet],)
 
 # Checks for libraries.
 
@@ -18,7 +18,9 @@ AC_PATH_PROG([PUPPET],[puppet])
 
 # Checks for library functions.
 
-if test -z "$PUPPET"  ; then 
+AM_EXTRA_RECURSIVE_TARGETS([test-ignore check-ignore])
+
+if test -z "$PUPPET"  ; then
   AC_MSG_ERROR("ERROR: puppet required. Please follow these install instructions:
 http://docs.puppetlabs.com/guides/puppetlabs_package_repositories.html
 ")
@@ -33,7 +35,7 @@ AC_OUTPUT
 
 AC_MSG_NOTICE(
  * * * * * * * * * * * * * * * * * * * * * *
- 
+
  The next step is to run 'sudo make needs'
  This runs the deps.py script to install packages required
  by scrumy-bdd
