@@ -34,6 +34,7 @@ fi
 export LIBVIRT_DEFAULT_URI="qemu+ssh://virtmgr@${vmgr_ip}/system"
 
 ndomname="t$sdomname"
+mybranch=`git branch | grep '^\*' | sed 's/^* //'`
 
 id_rsa=$keysdir/virt.id_rsa
 
@@ -42,9 +43,9 @@ virt-clone -o $sdomname -n $ndomname \
  || exit 1
 virsh start $ndomname || exit 1
 
-echo 'Give some time to boot (30 sec)'
-for t in {1..3}; do
-	echo .\n
+echo 'Give some time to boot (60 sec)'
+for t in {1..6}; do
+	echo -n ".${t}"
 	sleep 10
 done
 echo
@@ -65,6 +66,6 @@ echo $dip `cat $keysdir/virt.host.key.pub` >> ~/.ssh/known_hosts
 chmod 600 ~/.ssh/known_hosts
 
 scp -i $id_rsa vclone-setup.bash root@$dip: || exit 2
-ssh -i $id_rsa root@$dip bash vclone-setup.bash $git_ip || exit 2
+ssh -i $id_rsa root@$dip bash vclone-setup.bash $git_ip $mybranch || exit 2
 
 touch $ndomname.stamp
