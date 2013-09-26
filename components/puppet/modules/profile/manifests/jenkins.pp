@@ -1,77 +1,37 @@
 # jenkins profile
 # wget http://localhost:8085/jenkins/jnlpJars/jenkins-cli.jar
-# java -jar jenkins-cli.jar \
-#    -s http://localhost:8085/jenkins install-plugin
+#
 # NOTE: need to create git repo for config
 
 
-$myvar = ['trac',
-'git',
-'email-ext',
-'all-changes',
-'build-environment',
-'build-failure-analyzer',
-'disk-usage',
-'global-build-stats',
-'log-parser',
-'mttr',
-'sloccount',
-'warnings',
-'extreme-feedback',
-'conditional-buildstep',
-'envinject',
-'job-exporter',
-'managed-scripts',
-'python',
-'rake',
-'scons',
-'template-project',
-'buildresult-trigger',
-'build-timeout',
-'livescreenshot',
-'ssh',
-'timestamper',
-'libvirt-slave',
-'log-command',
-'gatling',
-'trac-publisher-plugin',
-'compact-columns',
-'custom-job-icon',
-'email-ext-recipients-column',
-'extra-columns',
-'PrioritySorter',
-'project-stats-plugin',
-'uptime',
-'analysis-core',
-'analysis-collector',
-'tasks',
-'jobgenerator',
-'build-monitor-plugin',
-'ansicolor',
-'thinBackup',
-'build-alias-setter',
-'buildcontext-capture',
-'buildgraph-view',
-'job-poll-action-plugin',
-'jobConfigHistory',
-'scm-sync-configuration',
-'ssh-agent',
-'storable-configs-plugin',
-'rich-text-publisher-plugin',
-'sitemonitor',
-'text-finder',
-'collapsing-console-sections',
-'dashboard-view',
-'embeddable-build-status',
-'emotional-jenkins-plugin',
-'greenballs',
-'iphoneview',
-'pragprog',
-'shelve-project-plugin',
-'sidebar-link',
-]
+
 # no CLI to delete plugins
 
-class profile::jenkins {
+  class profile::jenkins {
+
+  package { 'jenkins' :
+    ensure  => 'installed',
+  }
+  profile::jenkins_plugin {
+    ['all-changes', 'analysis-collector', 'analysis-core',
+    'ansicolor', 'build-alias-setter', 'buildcontext-capture',
+    'build-environment', 'build-failure-analyzer', 'buildgraph-view',
+    'build-monitor-plugin', 'buildresult-trigger', 'build-timeout',
+    'collapsing-console-sections', 'compact-columns',
+    'conditional-buildstep', 'custom-job-icon', 'dashboard-view',
+    'disk-usage', 'email-ext', 'email-ext-recipients-column',
+    'embeddable-build-status', 'emotional-jenkins-plugin',
+    'envinject', 'extra-columns', 'extreme-feedback', 'gatling',
+    'git', 'global-build-stats', 'greenballs', 'iphoneview',
+    'jobConfigHistory', 'job-exporter', 'jobgenerator',
+    'job-poll-action-plugin', 'libvirt-slave', 'livescreenshot',
+    'log-command', 'log-parser', 'managed-scripts', 'mttr',
+    'pragprog', 'PrioritySorter', 'project-stats-plugin', 'python',
+    'rake', 'rich-text-publisher-plugin', 'scm-sync-configuration',
+    'scons', 'shelve-project-plugin', 'sidebar-link', 'sitemonitor',
+    'sloccount', 'ssh', 'ssh-agent', 'storable-configs-plugin',
+    'tasks', 'template-project', 'text-finder', 'thinBackup',
+    'timestamper', 'trac', 'trac-publisher-plugin', 'uptime',
+    'warnings', ] : }
 
 }
