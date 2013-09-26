@@ -18,8 +18,14 @@ check-ignore: check-ignore-recursive
 
 test-ignore: check-ignore
 
-system-test:
-	$(MAKE) -C test/system $@
+
+check-system check-system-ignore: all
+	echo BEFORE
+	$(MAKE) -C tests/system $@
+	echo AFTER
+
+test-system-ignore: check-system-ignore
+test-system: check-system
 
 .PHONY: needs test system-test test-ignore check-ignore
 

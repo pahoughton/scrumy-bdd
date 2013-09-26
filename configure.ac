@@ -29,7 +29,7 @@ fi
 AC_CONFIG_FILES([Makefile
                  components/puppet/Makefile
                  tests/Makefile
-		 tests/virt/Makefile
+		 tests/system/Makefile
                  tests/src/Makefile])
 AC_OUTPUT
 
