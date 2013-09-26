@@ -1,16 +1,20 @@
 require 'spec_helper'
 
+$title = 'guser-gittest'
+$pName = 'gittest'
+
 describe 'gitolite::user', :type => 'define' do
 
+
   let :title do
-    'test'
+    $title
   end
 
   # parameters
-  let(:params) {{:name => 'gitest'}}
+  let(:params) {{:name => $pName}}
 
-  it 'should have the public key file' do
-    should contain_file('/home/git/admin/gitolite-admin/keydir/gitest.pub')
+  it 'contain user\'s public key file' do
+    should contain_file('/home/git/admin/gitolite-admin/keydir/'+$pName+'.pub')
   end
 
   it 'should run the git clone as needed' do

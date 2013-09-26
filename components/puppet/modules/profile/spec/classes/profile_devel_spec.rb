@@ -4,9 +4,13 @@ describe 'profile::devel' do
   let(:facts) {{
     :osfamily                 => 'RedHat',
     :operatingsystem          => 'Fedora',
-    
+
   }}
-  it 'should ensure gcc is installed' do
-    should contain_package('gcc').with_ensure('installed')
+
+  ['gcc','sloccount','emacs','xemacs'].each do |p|
+    it "install #{p}" do
+      should contain_package(p).with_ensure('installed')
+    end
   end
+
 end

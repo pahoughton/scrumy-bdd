@@ -1,10 +1,10 @@
 # gitolite user type
 define gitolite::user (
-  $name
-) {
+  $name          = undef,
+  $gl_home_dir   = '/home/git',
+  $gl_admin_dir  = '/home/git/admin/gitolite-admin',
 
-  $gl_home_dir   = '/home/git'
-  $gl_admin_dir = "${gl_home_dir}/admin/gitolite-admin"
+) {
 
 
   file { '/home/git/admin' :

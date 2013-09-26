@@ -1,5 +1,5 @@
-# www profile
-class profile::www {
+# www-nginx profile
+class profile::www_nginx {
   # Note the puppetlabs-nginx module won't quite do what I want
 
   package { 'nginx' :
@@ -18,6 +18,11 @@ class profile::www {
     ensure => directory,
   }
 
+  file { '/etc/tmpfiles.d/nginx.conf' :
+    ensure  => file,
+    content => 'd       /var/run/nginx  0775 nginx nginx\n'
+  }
+  ->
   file { "${nginx_cfg_dir}/nginx.conf" :
     ensure  => file,
     content => template('profile/nginx.conf.erb'),

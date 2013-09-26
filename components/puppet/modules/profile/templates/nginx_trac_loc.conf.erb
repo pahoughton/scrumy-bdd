@@ -4,7 +4,7 @@
   location ^~ /trac {
     root /home/trac/products;
 
-    fastcgi_pass   <%= @trac_fcgi_socket_fn %>;
+    fastcgi_pass   <%= @tracd_socket_fn %>;
 
     # python - wsgi specific
     # fastcgi_param HTTPS on;

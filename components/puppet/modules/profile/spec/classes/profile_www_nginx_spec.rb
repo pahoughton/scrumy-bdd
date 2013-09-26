@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'profile::www' do
+describe 'profile::www_nginx' do
 
   it 'should ensure nginx present' do
     should contain_package( 'nginx' ).with({
@@ -29,4 +29,8 @@ describe 'profile::www' do
     })
   end
 
+  it 'should create the tmpfile conf for unix sockets directory' do
+    should contain_file('/etc/tmpfiles.d/nginx.conf').
+      with_content(/d\s+\/var\/run\/nginx\s+0775\s+nginx\s+nginx/)
+  end
 end

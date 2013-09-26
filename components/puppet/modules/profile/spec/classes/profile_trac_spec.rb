@@ -34,7 +34,7 @@ describe 'profile::trac' do
 #     should contain_file('/home/trac/.ssh/id_rsa.pub')
 #   end
 
-  it 'should add the trac user to gitolite' do 
+  it 'should add the trac user to gitolite' do
     should contain_gitolite__user('trac')
   end
 
@@ -44,20 +44,19 @@ describe 'profile::trac' do
 
   it 'should add its location config to nginx' do
     should contain_file('/etc/nginx/locs.d/trac.conf').
-      with_content(/fcgi_nginx_trac.sock/)
+      with_content(/tracd-dispatch.sock/)
   end
 
-  it 'should create a trac_fcgi.service file' do
-    should contain_file('/usr/lib/systemd/system/trac_fcgi.service').
+  it 'should create a tracd.service file' do
+    should contain_file('/usr/lib/systemd/system/tracd.service').
       with_content(/User=trac/).
       with_content(/Group=nginx/).
       with_content(/UMask=006/).
-      with_content(/fcgi_nginx_trac.sock/).
-      with_content(/install.*fcgi_nginx/)
+      with_content(/tracd-dispatch.sock/)
   end
 
   it 'should enable and run trac_fcgi service' do
-    should contain_service('trac_fcgi').with({
+    should contain_service('tracd').with({
       'ensure' => 'running',
       'enable' => 'true',
     })
@@ -96,6 +95,14 @@ describe 'profile::trac' do
       'owner'   => 'trac',
       'mode'    => '0644'
     )
+  end
+
+  it 'install\'s http://trac-hacks.org/wiki/AcronymsPlugin plugin' do
+    should contain_file('JUNK')
+  end
+
+  it 'install\'s includemacro' do
+    should contain_file('JUNK')
   end
 
 end

@@ -1,5 +1,6 @@
 '''Test the gitolite jenkins post-receive hook script
 
+Trac Tickets: #17, #19, #57, #58
 '''
 import os
 import subprocess
@@ -20,6 +21,8 @@ JENKINS_TEST_TOKEN = 'gitbuild'
 JENKINS_TEST_JOB = 'test_host%20build'
 GITOLITE_TEST_URL = 'git@localhost'
 GIT_TEST_REPO = 'test_host'
+TRAC_TEST_DIR = '/home/trac/products/login_utils'
+TRAC_TEST_REPO = 'LoginUtils'
 
 class ReqHandler(BaseHTTPRequestHandler):
 
@@ -36,7 +39,7 @@ class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
 class TestJenkinsGitolitePostReceiveHook(unittest.TestCase):
     '''Feature: gitolite notification of jenkins on push
     as git user
-    git pushes should automatically notify jenkins.
+    git pushes automatically notify jenkins.
     '''
     @classmethod
     def setUpClass(cls):
@@ -65,25 +68,34 @@ class TestJenkinsGitolitePostReceiveHook(unittest.TestCase):
         penv = os.environ
         penv['GL_REPO'] = GIT_TEST_REPO
         penv['GIT_CONFIG'] = self.gitCfgFn
+        penv['TRAC_ADMIN_APP'] = 'echo'
         with subprocess.Popen(['python3.3',SCRIPT_SOURCE],
                               stdin=subprocess.PIPE,
                               stdout=subprocess.PIPE,
                               stderr=subprocess.STDOUT,
                               env=penv) as proc:
-            stdinText = 'nref oref '+branch+'\n'
+            stdinText = 'oref nref '+branch+'\n'
             scriptOut = proc.communicate(bytes(stdinText, 'utf-8'),20)
             
         scriptOutStr = scriptOut[0].decode('utf-8').strip()
         # hmmm this MAY deadlock
         return scriptOutStr
     
-    def doCfgTest(self,jurl=None,jbjob=None,jbtoken=None,gurl=None):
+    def doCfgTest(self,
+                  jurl=None,
+                  jbjob=None,
+                  jbtoken=None,
+                  gurl=None,
+                  tdir=None,
+                  trepo=None):
         '''perform the actual tests for the any configuration set
         
         jurl: http://host/jenkins - the jenkins.url value
         jbjob: test_host%20build - the jenkins.build.job value
         jbtoken: gitbuild - the jenkins.build.token value
         gurl: git@host - the gitolite.url value
+        tdir: /home/trac/product/product - trac product directory
+        trepo: ProdRepo - Trac repo name (as identified in trac)
         '''
         # first set the temporary configuration file values
         gitCfgTmp = tempfile.NamedTemporaryFile(delete=False)
@@ -109,7 +121,14 @@ class TestJenkinsGitolitePostReceiveHook(unittest.TestCase):
                          '        url = {url}\n'.format(url=gurl),
                          ]
                 f.writelines(lines)
-        
+
+            if tdir or trepo:
+                f.write('[trac]\n')
+                if tdir:
+                    f.write('        dir = {fdir}\n'.format(fdir=tdir))
+                if trepo:
+                    f.write('        repo = {frepo}\n'.format(frepo=trepo))
+                    
         myBranch = 'devel'
         # now establish the expected values
         expUrl = None
@@ -125,8 +144,11 @@ class TestJenkinsGitolitePostReceiveHook(unittest.TestCase):
                 expUrl += '&branches='+myBranch
             else:
                 expUrl = None
+
+        expTrac = None
+        if tdir and trepo:
+            expTrac = TRAC_TEST_DIR+'.*'+TRAC_TEST_REPO
             
-        
         #NOW we need to run the hook with the correct env and input to stdin
         sOut= self.runPostReceiveHook(myBranch)
 
@@ -140,7 +162,22 @@ class TestJenkinsGitolitePostReceiveHook(unittest.TestCase):
             self.assertTrue('not configured' in sOut,
                             'Script output does not contain: not configured\noutput: '
                             +sOut)
-        
+
+        if expTrac:
+            self.assertRegex(sOut, expTrac,
+                             'Script output does not contain: '+
+                             expTrac+
+                             '\nOutput:\n'+
+                             sOut )
+        else:
+            self.assertNotRegex(sOut, TRAC_TEST_DIR,
+                                'Script output contains: '+
+                                TRAC_TEST_DIR+
+                                '\nOutput:\n'+
+                                sOut )
+                                     
+
+            
     def test_jenkin_build_job_tok(self):
         '''Scenario: git push runs specific jenkins job
         Given: post-receive is run as a gitolite hook
@@ -207,3 +244,42 @@ class TestJenkinsGitolitePostReceiveHook(unittest.TestCase):
         self.doCfgTest(jurl=JENKINS_TEST_URL, 
                        jbtoken=JENKINS_TEST_TOKEN)
 
+    def test_trac_good_cfg(self):
+        '''Scenario: git push updates trac
+        Given: post-receive is run as a gitolite hook
+        and: the repository has config trac.dir
+        and: the repository has config trac.repo
+        When: git push
+        Then: Trac is notified of the commits
+        '''
+        self.doCfgTest(jurl=JENKINS_TEST_URL, 
+                       gurl=GITOLITE_TEST_URL,
+                       tdir=TRAC_TEST_DIR,
+                       trepo=TRAC_TEST_REPO)
+
+    def test_trac_bad_cfg(self):
+        '''Scenario: git push with trac config
+        Given: post-receive is run as a gitolite hook
+        and: the repository does not have both config trac.dir trac.repo
+        When: git push
+        Then: Trac is not notified of the commits
+        '''
+        self.doCfgTest(jurl=JENKINS_TEST_URL, 
+                       gurl=GITOLITE_TEST_URL,
+                       tdir=TRAC_TEST_DIR)
+        self.doCfgTest(jurl=JENKINS_TEST_URL, 
+                       gurl=GITOLITE_TEST_URL,
+                       trepo=TRAC_TEST_REPO)
+
+    def test_morror(self):
+        '''Scenario: git push with mirror config
+        Given: post-receive is run as a gitolite hook
+        and: the repository has git.mirror.repo config
+        When: git push
+        Then: latest changes are mirrored.
+
+        Note: Unit testing not reasonable. A server needs to be
+        configured to receive the git push. Maybe not, it should
+        be possible to mirror to a locally created repo.
+        '''
+        pass
