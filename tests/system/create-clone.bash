@@ -41,6 +41,8 @@ id_rsa=$keysdir/virt.id_rsa
 virt-clone -o $sdomname -n $ndomname \
  -f /var/lib/libvirt/images/$ndomname.img \
  || exit 1
+# I've seen some timing problems. lets nap a bit
+sleep 30
 virsh start $ndomname || exit 1
 
 echo 'Give some time to boot (60 sec)'
@@ -59,6 +61,7 @@ if [ -z "$dip" ] ; then
   echo "no domain ip value :("
   exit 2
 fi
+echo $dip > $ndomname.ipaddr
 
 grep -v ^$dip ~/.ssh/known_hosts > ~/.ssh/known_hosts.bkup
 cp ~/.ssh/known_hosts.bkup ~/.ssh/known_hosts

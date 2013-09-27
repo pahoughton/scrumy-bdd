@@ -27,6 +27,10 @@ check-system check-system-ignore: all
 test-system-ignore: check-system-ignore
 test-system: check-system
 
+release:
+	echo "Not working yet!"
+	exit 1
+
 .PHONY: needs test system-test test-ignore check-ignore
 
 
