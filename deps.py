@@ -21,9 +21,9 @@ def which(filename):
             return fn
     return None
 
-def sysdo(*args):
-    print 'run:',' '.join(args)
-    sout = sp.check_output(args).decode('utf-8')
+def sysdo(cmd):
+    print 'run:',' '.join(cmd)
+    sout = sp.check_output(cmd).decode('utf-8')
     print sout
 
 def install_osx_package(pkgfn):
@@ -126,12 +126,13 @@ def install_puppet():
             sysdo(['yum', 'install', 'puppet'])
 
         elif platform.dist()[0] in ['Ubuntu','debian']:
-            fname = 'puppetlabs-release-'+platform.dist[2]+'.deb'
+            fname = 'puppetlabs-release-'+platform.dist()[2]+'.deb'
             url = 'http://apt.puppetlabs.com/'
 
             sysdo(['wget', url+fname])
-            sysdo(['dpkg -i '+fname])
-            sysdo(['apt-get update'])
+            sysdo(['dpkg','-i',fname])
+            sysdo(['apt-get','-y','update'])
+            sysdo(['apt-get','-y','install','puppet'])
 
         else:
             print 'Unsupported platform: '+platform.system()
