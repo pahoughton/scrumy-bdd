@@ -46,6 +46,8 @@ sleep 30
 virsh start $ndomname || exit 1
 
 echo 'Give some time to boot (60 sec)'
+sleep 10
+sleep 20
 sleep 30
 
 echo

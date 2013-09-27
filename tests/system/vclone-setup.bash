@@ -28,5 +28,4 @@ su -c "git clone git@${git_ip}:${repo}" - tester
 cd $repo
 su -c "cd $repo; git checkout ${branch}" - tester
 python deps.py && \
-su -c autoreconf - tester && \
-su -c configure - tester
+su -c "cd $repo; autoreconf; ./configure" - tester
