@@ -51,9 +51,9 @@ sleep 20
 sleep 30
 
 echo
-arp -an
+/usr/sbin/arp -an
 virsh domiflist $ndomname
-dip=`arp -an | grep \`virsh domiflist $ndomname |\
+dip=`/usr/sbin/arp -an | grep \`virsh domiflist $ndomname |\
      grep rtl8139 | awk '{print $5}'\` |\
      sed 's/.*(\(.*\)).*/\1/'`
 echo $dip
