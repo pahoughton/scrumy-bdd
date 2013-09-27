@@ -211,6 +211,9 @@ node default {
     }
   }
 
+  package { 'bash' :
+    ensure   => 'installed',
+  }
   package { 'libtool' :
     ensure   => 'installed',
   }->
