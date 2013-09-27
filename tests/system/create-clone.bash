@@ -34,7 +34,7 @@ fi
 export LIBVIRT_DEFAULT_URI="qemu+ssh://virtmgr@${vmgr_ip}/system"
 
 ndomname="t$sdomname"
-if [ -z "$GIT_BRANCH" ] ;
+if [ -z "$GIT_BRANCH" ] ; then
 	mybranch=`git branch | grep '^\*' | sed 's/^* //'`
 else
 	mybranch="$GIT_BRANCH"
