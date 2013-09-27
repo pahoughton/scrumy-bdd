@@ -62,8 +62,91 @@ node default {
         command  => '/opt/local/bin/pip-3.3 install nose-exclude',
         require  => Package['py33-pip'],
       }
+		  package { 'rspec-core' :
+		    ensure   => '2.13.0',
+		    provider => 'gem',
+		  }->
+		  package { 'libxslt-devel' :
+		    ensure   => 'installed',
+		  }->
+		  package { 'libxslt' :
+		    ensure   => 'installed',
+		  }->
+		  package { 'libxml2-devel' :
+		    ensure   => 'installed',
+		  }->
+		  package { 'libxml2' :
+		    ensure   => 'installed',
+		  }
     }
 
+    'Debian': {
+
+      package { 'zfs-fuse' :
+        ensure    => 'installed',
+      }->
+      service { 'zfs-fuse' :
+        ensure    => 'running',
+        enable    => true,
+      }
+      package { 'python' :
+        ensure   => 'installed',
+      }
+      package { 'python-pip' :
+        ensure   => 'installed',
+      }
+      package { 'python3' :
+        ensure   => 'installed',
+      }
+      package { 'python3-pip' :
+        ensure   => 'installed',
+      }
+      package { 'python-nose' :
+        ensure   => 'installed',
+        require  => Package['python'],
+      }
+      package { 'nose-cover3' :
+        ensure   => 'installed',
+        provider => 'pip',
+        require  => Package['python-nose'],
+      }
+      package { 'nose-exclude' :
+        ensure   => 'installed',
+        provider => 'pip',
+        require  => Package['python-nose'],
+      }
+      package { 'python3-nose' :
+        ensure   => 'installed',
+        require  => Package['python3'],
+      }
+      exec { 'install_nose3-cover3' :
+        command  => '/usr/bin/pip-3.3 install nose-cover3',
+        require  => Package['python3-pip'],
+      }
+      exec { 'install_nose3-exclude' :
+        command  => '/usr/bin/pip-3.3 install nose-exclude',
+        require  => Package['python3-pip'],
+      }
+		  package { 'libxml2' :
+		    ensure   => 'installed',
+		  }->
+      package { 'libxml2-dev' :
+        ensure   => 'installed',
+      }->
+      package { 'libxslt1.1' :
+        ensure   => 'installed',
+      }->
+      package { 'libxslt1-dev' :
+        ensure   => 'installed',
+      }->
+      package { 'ruby-full' :
+        ensure   => 'installed',
+      }->
+      package { 'rspec-core' :
+        ensure   => '2.13.0',
+        provider => 'gem',
+      }
+    }
     default: {
 
       package { 'zfs-fuse' :
@@ -109,9 +192,31 @@ node default {
         ensure   => 'installed',
         require  => Package['python3'],
       }
+      package { 'libxml2' :
+        ensure   => 'installed',
+      }
+      package { 'libxml2-devel' :
+        ensure   => 'installed',
+      }->
+      package { 'libxslt' :
+        ensure   => 'installed',
+      }->
+		  package { 'libxslt-devel' :
+		    ensure   => 'installed',
+		  }->
+      package { 'rspec-core' :
+        ensure   => '2.13.0',
+        provider => 'gem',
+      }
     }
   }
 
+  package { 'libtool' :
+    ensure   => 'installed',
+  }->
+  package { 'autoconf' :
+    ensure   => 'installed',
+  }
   package { 'rspec-puppet' :
     ensure   => 'installed',
     provider => 'gem',
@@ -128,25 +233,10 @@ node default {
     ensure    => 'installed',
     provider  => 'gem',
   }
-  package { 'libxml2' :
-    ensure   => 'installed',
-  }->
-  package { 'libxml2-devel' :
-    ensure   => 'installed',
-  }->
-  package { 'libxslt' :
-    ensure   => 'installed',
-  }->
-  package { 'libxslt-devel' :
-    ensure   => 'installed',
-  }->
-  package { 'rspec-core' :
-    ensure   => '2.13.0',
-    provider => 'gem',
-  }->
   package { 'rspec-mocks' :
     ensure   => '2.13.0',
     provider => 'gem',
+    require  => Package['rspec-core']
   }->
   package { 'rspec-expectations' :
     ensure   => '2.13.0',

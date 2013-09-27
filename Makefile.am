@@ -14,7 +14,10 @@ needs:
 
 test: check
 
-check-ignore: check-ignore-recursive
+check-ignore:
+	for dir in $(SUBDIRS) ; do \
+	  $(MAKE) -C $$dir $@ || exit 1; \
+	done
 
 test-ignore: check-ignore
 

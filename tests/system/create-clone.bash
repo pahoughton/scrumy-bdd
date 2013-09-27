@@ -46,10 +46,8 @@ sleep 30
 virsh start $ndomname || exit 1
 
 echo 'Give some time to boot (60 sec)'
-for t in {1..6}; do
-	echo -n ".${t}"
-	sleep 10
-done
+sleep 30
+
 echo
 arp -an
 virsh domiflist $ndomname

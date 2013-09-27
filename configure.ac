@@ -18,7 +18,8 @@ AC_PATH_PROG([PUPPET],[puppet],)
 
 # Checks for library functions.
 
-AM_EXTRA_RECURSIVE_TARGETS([test-ignore check-ignore])
+# :( ubuntu 13 has automake 1.11 :(
+# AM_EXTRA_RECURSIVE_TARGETS([test-ignore check-ignore])
 
 if test -z "$PUPPET"  ; then
   AC_MSG_ERROR("ERROR: puppet required. Please follow these install instructions:
