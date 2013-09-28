@@ -21,7 +21,7 @@ test-system: sys-test-cfg-py
 	  $(MAKE) test-system-on-host igret=${igret}
 	${igret}cd remote && nosetests-3.3 --with-coverage3
 
-test-system-on-host: tclone.ipaddr
+test-system-on-host:
 	make -C ${top_srcdir} install
 	${igret}cd local && nosetests-3.3 --with-coverage3
 

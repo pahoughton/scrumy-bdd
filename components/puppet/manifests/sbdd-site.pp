@@ -17,10 +17,9 @@ node default {
     groups      => ['staff','testing','nginx','git'],
   }
 
+  class { 'profile::devel' : }
   class { 'gitolite' : }
 
-  gitolite::user { 'paul' : }
-
-  class { 'profile::devel' : }
+#  gitolite::user { 'paul' : }
 
 }

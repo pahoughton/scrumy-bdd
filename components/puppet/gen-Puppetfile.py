@@ -13,7 +13,7 @@ import yaml
 
 git_branch = os.environ.get('GIT_BRANCH')
 if not git_branch:
-    tmp = sp.check_output(['git',
+    git_branch = sp.check_output(['git',
                            'rev-parse',
                            '--abbrev-ref',
                            'HEAD']).decode('utf-8').strip()
