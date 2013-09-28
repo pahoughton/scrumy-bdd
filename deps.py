@@ -95,21 +95,21 @@ def install_puppet():
         if platform.dist()[0] in yum_platforms:
             repourl = 'http://yum.puppetlabs.com/'
             repoloc = None
-            os_name, os_ver = platform.dist()
+            (os_name, os_ver, os_vername) = platform.dist()
             if os_name in ['centos','redhat']:
-                repoloc = '/'.join('el',
+                repoloc = '/'.join(['el',
                                    os_ver,
                                    'products',
                                    'i386',
                                    'puppetlabs-release-'
                                    +os_ver
-                                   +'-7.noarch.rpm')
+                                   +'-7.noarch.rpm'])
             elif os_name == 'fedora':
-                repoloc = '/'.join('fedora',
-                                   'f'+os_ver,
-                                   'products',
-                                   'i386',
-                                   'puppetlabs-release-')
+                repoloc = '/'.join(['fedora',
+                                    'f'+os_ver,
+                                    'products',
+                                    'i386',
+                                    'puppetlabs-release-'])
                 if os_ver in ['17','18']:
                     repoloc += os_ver + '-7'
                 elif os_ver == '19':
@@ -123,7 +123,7 @@ def install_puppet():
                 sys.exit(1)
 
             sysdo(['rpm', '-ivh', repourl+repoloc])
-            sysdo(['yum', 'install', 'puppet'])
+            sysdo(['yum', '-y','install', 'puppet'])
 
         elif platform.dist()[0] in ['Ubuntu','debian']:
             fname = 'puppetlabs-release-'+platform.dist()[2]+'.deb'

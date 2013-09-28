@@ -42,9 +42,17 @@ fi
 
 id_rsa=$keysdir/virt.id_rsa
 
-virt-clone -o $sdomname -n $ndomname \
- -f /var/lib/libvirt/images/$ndomname.img \
- || exit 1
+if [ "$sdomname" == 'centos' ] ; then
+	# clone fails for cent because of mac addr
+	virsh vol-clone centos.img tcentos.img --pool default
+    virsh define /var/lib/libvirt/domxml/tcentos.xml
+    hkey=centos
+else
+	virt-clone -o $sdomname -n $ndomname \
+	 -f /var/lib/libvirt/images/$ndomname.img \
+	 || exit 1
+	hkey=virt
+fi
 # I've seen some timing problems. lets nap a bit
 sleep 30
 virsh start $ndomname || exit 1
@@ -65,14 +73,14 @@ if [ -z "$dip" ] ; then
   echo "no domain ip value :("
   exit 2
 fi
-echo $dip > $ndomname.ipaddr
 
 grep -v ^$dip ~/.ssh/known_hosts > ~/.ssh/known_hosts.bkup
 cp ~/.ssh/known_hosts.bkup ~/.ssh/known_hosts
-echo $dip `cat $keysdir/virt.host.key.pub` >> ~/.ssh/known_hosts
+echo $dip `cat ${keysdir}/${hkey}.host.key.pub` >> ~/.ssh/known_hosts
 chmod 600 ~/.ssh/known_hosts
 
 scp -i $id_rsa vclone-setup.bash root@$dip: || exit 2
 ssh -i $id_rsa root@$dip bash vclone-setup.bash $git_ip $mybranch || exit 2
 
-touch $ndomname.stamp
+echo $dip > $ndomname.ipaddr
+echo $dip > thost.ipaddr

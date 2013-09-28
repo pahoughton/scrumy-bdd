@@ -1,3 +1,3 @@
 node default {
-  notice { 'Default node used' : }
+  notify { 'Default node used' : }
 }

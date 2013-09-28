@@ -23,9 +23,10 @@ test-ignore: check-ignore
 
 
 check-system check-system-ignore: all
-	echo BEFORE
 	$(MAKE) -C tests/system $@
-	echo AFTER
+
+test-system-on-host:
+	$(MAKE) -C tests/system $@
 
 test-system-ignore: check-system-ignore
 test-system: check-system
@@ -34,11 +35,14 @@ release:
 	echo "Not working yet!"
 	exit 1
 
-.PHONY: needs test system-test test-ignore check-ignore
+dist:
+	$(MAKE) -C components/puppet $@
+
+install: dist
+	cd $(top_srcdir)/build/etc
+	find puppet -type f | cpio -pvdum /etc
+	puppet apply /etc/puppet/manifests/site.pp
+
+.PHONY: needs test system-test test-ignore check-ignore dist
 
 
-#check:
-
-system-test:
-	echo 'Not implemented'
-	exit 1

@@ -195,6 +195,9 @@ node default {
       package { 'libxml2' :
         ensure   => 'installed',
       }
+      package { 'ruby-devel' :
+        ensure   => 'installed',
+      }->
       package { 'libxml2-devel' :
         ensure   => 'installed',
       }->

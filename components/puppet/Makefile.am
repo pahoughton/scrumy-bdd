@@ -31,3 +31,14 @@ real-test: puppet-lint
 	  fi							       \
 	done
 
+$(top_srcdir)/build/etc/puppet:
+	mkdir -p $@
+
+dist: $(top_srcdir)/build/etc/puppet
+	cd $(srcdir); \
+	find extdata manifests \
+	   modules/*/files modules/*/templates modules/*/manifests \
+	   -type f \
+	  | grep -v '~$$' \
+	  | cpio -pvdum $(abs_top_srcdir)/build/etc/puppet
+
