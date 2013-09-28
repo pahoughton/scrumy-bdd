@@ -64,7 +64,8 @@ def main():
     with open('Home.mediawiki','w') as f:
         f.write(mw)
 
-    for pg in ['Features']:
+    # FIXME - hard coded pages
+    for pg in ['Features','News']:
         orig = get_wiki_page(conn,pg)
         with open(pg+'.trac','w') as f:
             f.write(orig)
@@ -76,7 +77,7 @@ def main():
     print 'ORIG:\n'
     print orig
     print 'NEW'
-    print new
+    print mw
 
 class TestConvert(unittest.TestCase):
 
