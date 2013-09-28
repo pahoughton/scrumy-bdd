@@ -33,7 +33,7 @@ first installs puppet on the system, then uses puppet to install the
 other dependencies via ./deps.pp.
 
 puppet >= 3.2.4: need the puppet labs repo, use `sudo rpm -ivh` with
-the correct link. See [http://docs.puppetlabs.com/guides/puppetlabs_package_repositories.html]() 
+the correct link. See [http://docs.puppetlabs.com/guides/puppetlabs_package_repositories.html]()
 for a current list of links.
 
 fedora_19: http://yum.puppetlabs.com/fedora/f19/products/i386/puppetlabs-release-19-2.noarch.rpm
@@ -41,17 +41,17 @@ redhat_6: http://yum.puppetlabs.com/el/6/products/i386/puppetlabs-release-6-7.no
 
 All other dependancies are handled by puppet. See deps.pp and make
 needs target for details.
-	
+
 Installation
 ============
 
-  yum install autoconf
-  autoreconf
-  configure
-  sudo make needs
-  make test (synonym for check)
-  # make dont_install - NOT READY FOR PRIME TIME
-	
+yum install autoconf
+autoreconf
+configure
+sudo make needs
+make test (synonym for check)
+make dont_install - NOT READY FOR PRIME TIME
+
 
 Please See [wiki](https://github.com/pahoughton/scrumy-bdd/wiki) for
 Detailed documentation.
@@ -62,6 +62,6 @@ available for bug reporting and enhancements.
 A general discussion forum will be available soon.
 
 
-# Local Variables:
-# mode:text
-# End:
+  Local Variables:
+  mode:text
+  End:
