@@ -46,7 +46,7 @@ class profile::trac {
 
   package { 'trac' :
     ensure   => 'present',
-    require  => [ Class['www'],
+    require  => [ Class['www-nginx'],
                   Package['postgresql'],
                   Package['python-psycopg2'],
                   Package['python-flup'],
