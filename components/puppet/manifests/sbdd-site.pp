@@ -1,6 +1,9 @@
 # Puppet entry point
 #
 
+$extlookup_datadir = "/etc/puppet/manifests/extdata"
+$extlookup_precedence = ["%{fqdn}", "domain_%{domain}","common","scrumy-bdd"]
+
 node default {
 
   group { ['staff','testing','nginx','git'] :

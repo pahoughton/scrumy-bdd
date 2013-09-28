@@ -35,14 +35,15 @@ release:
 	echo "Not working yet!"
 	exit 1
 
-dist:
+dist-build:
 	$(MAKE) -C components/puppet $@
 
-install: dist
-	cd $(top_srcdir)/build/etc
-	find puppet -type f | cpio -pvdum /etc
-	puppet apply /etc/puppet/manifests/site.pp
+build/etc: dist-build
 
-.PHONY: needs test system-test test-ignore check-ignore dist
+install: 
+	echo 'INSTALL TARGET'
+	$(MAKE) -C components/puppet $@
+
+.PHONY: needs test system-test test-ignore check-ignore
 
 

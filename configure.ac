@@ -5,6 +5,7 @@ AC_PREREQ([2.69])
 AC_INIT([TestHost],[0.1],[paul4hough@gmail.com])
 AM_INIT_AUTOMAKE
 
+AC_PREFIX_DEFAULT([/])
 # Checks for programs.
 AC_PROG_MAKE_SET
 

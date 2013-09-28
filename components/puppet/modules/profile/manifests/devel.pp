@@ -3,7 +3,10 @@ class profile::devel {
 
   include gcc
 
-  package { ['sloccount','emacs','xemacs'] :
+  package { ['sloccount',
+             'emacs',
+             'xemacs',
+             'xemacs-packages-extra'] :
     ensure => installed
   }
 

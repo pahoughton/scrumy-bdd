@@ -31,6 +31,24 @@ real-test: puppet-lint
 	  fi							       \
 	done
 
+${prefix}/etc/puppet/.git:
+	cd ${prefix}/etc/puppet && 	\
+	git init && 			\
+	librarian-puppet init &&	\
+	git add . && 			\
+	git commit -m 'initial version'
+
+${prefix}/etc/puppet/Puppetfile: ${prefix}/etc/puppet/.git gen-Puppetfile.py
+	python3 gen-Puppetfile.py > $@
+	find extdata manifests -type f \
+	  | grep -v '~$$' \
+	  | cpio -pvdum ${prefix}/etc/puppet
+	cd ${prefix}/etc/puppet && librarian-puppet install
+	puppet apply ${prefix}/etc/puppet/manifests/sbdd-site.pp
+
+
+install: ${prefix}/etc/puppet/Puppetfile
+
 $(top_srcdir)/build/etc/puppet:
 	mkdir -p $@
 
