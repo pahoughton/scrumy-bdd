@@ -24,7 +24,7 @@ def which(filename):
 def sysdo(cmd):
     print 'run:',' '.join(cmd)
     sout = sp.check_output(cmd).decode('utf-8')
-    print sout
+    print repr(sout)
 
 def install_osx_package(pkgfn):
     '''install an osx .pkg file
