@@ -202,8 +202,8 @@ if platform.system() == 'Darwin' and not which('port'):
     # need macports for os x
     install_macports()
 
-for ek,ev in os.environ:
-    print ek+'='+ev
+for ek in os.environ:
+    print ek+'='+os.environ[ek]
     
 if platform.system() == 'Darwin' and os.environ.get('TRAVIS'):
     pass
