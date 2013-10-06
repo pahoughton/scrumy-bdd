@@ -1,10 +1,9 @@
-# Scrumy BDD #
-
+## Scrumy BDD
 
 Please see [wiki](https://github.com/pahoughton/scrumy-bdd/wiki) for
 Detailed documentation.
 
-## The Vision ##
+### The Vision
 
 A tool set for all project members to collaborate on all aspects
 of a software system that utilizes
@@ -13,7 +12,7 @@ of a software system that utilizes
 and [Continuous Integration](http://en.wikipedia.org/wiki/Continuous_integration)
 rom inception to retirement.
 
-## Goals ##
+### Goals
 
   * Everything is written down.
   * Nothing is repeated (duplication leads to inconsistencies).
@@ -24,34 +23,20 @@ rom inception to retirement.
   * Connections between specification, code and validation are
     strictly maintained.
 
+### Dependencies
 
-Dependencies
-============
-
-These dependencies can be installed via the `make need` target, which
+Dependencies can be installed via the `make need` target, which
 first installs puppet on the system, then uses puppet to install the
 other dependencies via ./deps.pp.
 
-puppet >= 3.2.4: need the puppet labs repo, use `sudo rpm -ivh` with
-the correct link. See [http://docs.puppetlabs.com/guides/puppetlabs_package_repositories.html]()
-for a current list of links.
+### Installation
 
-fedora_19: http://yum.puppetlabs.com/fedora/f19/products/i386/puppetlabs-release-19-2.noarch.rpm
-redhat_6: http://yum.puppetlabs.com/el/6/products/i386/puppetlabs-release-6-7.noarch.rpm
-
-All other dependancies are handled by puppet. See deps.pp and make
-needs target for details.
-
-Installation
-============
-
-yum install autoconf
-autoreconf
-configure
-sudo make needs
-make test (synonym for check)
-make dont_install - NOT READY FOR PRIME TIME
-
+    yum install autoconf
+    autoreconf
+    configure
+    sudo make needs
+    make test (synonym for check)
+    make dont_install - NOT READY FOR PRIME TIME
 
 Please See [wiki](https://github.com/pahoughton/scrumy-bdd/wiki) for
 Detailed documentation.
@@ -59,8 +44,24 @@ Detailed documentation.
 [Issue Tracking](https://github.com/pahoughton/scrumy-bdd/issues) is
 available for bug reporting and enhancements.
 
-A general discussion forum will be available soon.
+[Forum](https://groups.google.com/forum/#!forum/scrumy-bdd) is available
+for general discussion.
 
+### License
+
+Copyright 2013 (c) Paul Houghton
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 
   Local Variables:
   mode:text
