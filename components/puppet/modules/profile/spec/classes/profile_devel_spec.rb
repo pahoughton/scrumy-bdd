@@ -12,5 +12,4 @@ describe 'profile::devel' do
       should contain_package(p).with_ensure('installed')
     end
   end
-
 end
