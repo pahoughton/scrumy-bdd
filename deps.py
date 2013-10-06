@@ -30,9 +30,9 @@ def install_osx_package(pkgfn):
     '''install an osx .pkg file
     '''
     instcmd = ['installer',
-               '-pkg',
                '-verbose',
                '-dumplog',
+               '-pkg',
                pkgfn,
                '-target',
                '/']
