@@ -1,0 +1,12 @@
+language: objective-c
+notifications:
+  email:
+    - paul4hough@gmail.com
+
+before_script:
+  - echo -e "Host heroku.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+  - echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+  - bash travis-env.bash
+  - sudo python deps.py
+
+script: "bundle exec rake -t test_py_deps"
