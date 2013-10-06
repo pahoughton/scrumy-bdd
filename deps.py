@@ -202,8 +202,13 @@ if platform.system() == 'Darwin' and not which('port'):
     # need macports for os x
     install_macports()
 
-if platform.system() == 'Darwin' and os.environ['TRAVIS']:
-    os.environ['PATH'] = '/usr/bin:/bin:/usr/local/bin:'+os.environ['PATH']
+for ek,ev in os.environ:
+    print ek+'='+ev
+    
+if platform.system() == 'Darwin' and os.environ.get('TRAVIS'):
+    pass
+
+os.environ['PATH'] = '/usr/bin:/bin:/usr/local/bin:'+os.environ['PATH']
 
 sysdo(['head',which('puppet')])
 sysdo(['echo','$PATH'])
