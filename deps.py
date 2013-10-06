@@ -31,6 +31,8 @@ def install_osx_package(pkgfn):
     '''
     instcmd = ['installer',
                '-pkg',
+               '-verbose',
+               '-dumplog',
                pkgfn,
                '-target',
                '/']
@@ -200,8 +202,11 @@ if platform.system() == 'Darwin' and not which('port'):
     # need macports for os x
     install_macports()
 
-cmd = ['puppet','apply','deps.pp']
-print 'run:',' '.join(cmd)
-sout = sp.check_output(cmd)
-print sout
+if platform.system() == 'Darwin' and os.environ['TRAVIS']:
+    os.environ['PATH'] = '/usr/bin:/bin:/usr/local/bin:'+os.environ['PATH']
+
+sysdo(['head',which('puppet')])
+sysdo(['echo','$PATH'])
+sysdo(['puppet','apply','deps.pp'])
+
 print 'Dependencies installed, enjoy ;)'
