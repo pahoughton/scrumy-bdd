@@ -1,0 +1,8 @@
+# Puppet modules dependancies
+mod "python",
+  :git => "https://github.com/pahoughton/puppet-python"
+  :ref => "stable"
+
+mod "gitolite",
+  :git => "https://github.com/pahoughton/puppet-gitolite"
+  :ref => "stable"
