@@ -1,0 +1,401 @@
+~~~
+I chose simple parseable text as my UI to specify the initial set of
+features for ScrummyBDDHelper following the BDD model.
+~~~
+
+Feature: Interface: A User Interface is presented to the user through a web browser.
+
+Scenario: Access will be possible with IE, Firefox, Chrome, Safari, iOS devices, and android devices
+
+    Given: anonymous access to the system's url provides the current accessible state of itself.
+
+    When: someone accesses the system's base url
+
+    Then: a response with the current state of the system is provided
+
+
+Feature: Security: Password security constraints will be definable by the admin. The constraints will include length and minimal content mixtures. The saved constraints will effect all new passwords, and the option to expire existing passwords, to ensure they meet the new constraints, must be available.
+
+Scenario: the admin needs to change the password validation constraints.
+
+    Given: the admin navigates to the page
+
+    When: the admin modifies the constraints
+
+    Then: those constraints are then used for all new passwords
+
+Scenario: the decision to expire existing passwords has been made.
+
+    Given: existing user's passwords must be changed.
+
+    When: the admin specifies the expire time limit.
+
+    Then: all users will be required to change their passwords before accessing the system once the expire time limit has elapsed 
+
+
+Feature: Security: User authentication is required. User will be identified by their email and their profile information will include the person's common (first) and last names.
+
+Scenario: a new user has been identified
+
+    Given: the user's email is not in the system
+
+    When: the user's common name is provided
+     And: the user's last name is provided
+     And: the user's email is provided
+
+    Then: an email is sent to the user with the next step required for identification.
+
+Scenario: a user completes the authentication process by entering a secure password.
+
+    Given: a user has not initialized they're password
+
+    When: the user enters a valid password
+
+    Then: the user may login to the system.
+
+Scenario: an existing user needs to be deleted.
+
+    Given: the user exists in the system
+
+    When: the admin deletes the user.
+
+    Then: the user can no logger login to the system
+
+Feature: Security: Optional user profile information shall include mobile phone number, office phone number, image, location information and organizational information (such as manager etc).
+
+Scenario: an existing user modifies their optional profile information
+
+    Given: the user is logged in
+
+    When: the user modifies their profile
+
+    Then: the modifications are saved.
+
+Feature: an admin user will exists. This user will have complete access to the security constraints configuration.
+
+Scenario: modifications to the system's security constraints is require.
+
+    Given: the admin user logs into the system
+
+    When: the modify the security constraints
+
+    Then: the modifications take effect
+
+
+Scenario: 
+
+    Given:
+
+    When:
+
+    Then:
+
+Feature: Security: User groups will be available for access control.
+
+Scenario: a new user group is needed
+
+    Given: the user group does not exist
+
+    When: the admin adds it
+
+    Then: the group exists
+
+Scenario: a user group can be renamed
+
+    Given: an existing user group is selected
+
+    When: the admin changes it's name
+
+    Then: the user group's name is updated
+
+Scenario: an empty user group can be deleted
+
+    Given: an existing user group is selected
+      And: the group does not contain any users
+
+    When: the admin deletes it
+
+    Then: the user group is removed
+
+
+
+Feature: Security: configurable user access authorization with page and action level granularity. 
+
+Scenario: an admin user needs to see the list of actions, pages and users available
+
+    Given: the system is avaiable
+      And: an admin is logged on.
+
+    When: they request a the security admin page
+
+    Then: lists of access, modification and users is provided
+
+Scenario:
+
+    Given:
+
+    When:
+
+    Then:
+
+Feature: Security: any combination of actions may be grouped for administration
+
+Scenario: a new action group is needed
+
+    Given: the admin needs a new group
+
+    When: it is added
+
+    Then: the group exists
+
+Scenario: an action group can be renamed
+
+    Given: an existing action group is selected
+
+    When: the admin changes it's name
+
+    Then: the action group's name is updated
+
+Scenario: an empty action group can be deleted
+
+    Given: an existing action group is selected
+      And: the action group does not contain any actions
+
+    When: the admin deletes it
+
+    Then: the action group is removed
+
+Feature: Security: an action group may contain any number of actions. The users or user groups granted access to the actions in the group.
+
+Scenario: the admin adds actions to a group
+
+    Given: the action group exists
+
+    When: actions are added to the action group
+
+    Then: those action's security constraints will follow the group's
+
+Scenario: the admin removes actions from a group
+
+    Given: the action group exists 
+      And: has actions
+
+    When: selected actions are deleted
+
+    Then: those action's security constraints will revert to the system's default
+
+Feature: Security: 
+
+Scenario: an unknown user accesses the base url
+
+    Given: an unknown user attempts to accesses the system
+
+    When: the information is presented
+
+    Then: the user's access is limited to some form of public level access.
+
+Scenario: a user has been identified according to acceptable standards, that identity is available to limit and track access and modification as needed.
+
+    Given: an identified (known) attempts interaction
+
+    When: the interaction is processed
+
+    Then: the user's identity is available for securing the interaction
+
+Scenario: an anonymous user successfully identifies themselves to the system.
+
+    Given: an anonymous user attempts to login
+
+    When: the credentials are accepted
+
+    Then: the user's identity is available for all other access until potentially expired.
+
+Scenario: an anonymous user has not successfully identified themselves to the system.
+
+    Given: an anonymous user attempts to login
+
+    When: the credentials are rejected
+
+    Then: the user remains anonymous
+
+Scenario: an anonymous user is repeatedly not successful in identifying themselves to the system.
+
+    Given: an anonymous user reattempts to access the system
+
+    When: the credentials are rejected
+     And: a configurable number of attempts have been made
+
+    Then: no further attempts will be considered until a configurable condition has been met.
+
+
+
+Scenario:
+
+    Given:
+
+    When:
+
+    Then:
+
+Feature: 
+
+Scenario:
+
+    Given:
+
+    When:
+
+    Then:
+
+Scenario:
+
+    Given:
+
+    When:
+
+    Then:
+
+Feature: 
+
+Scenario:
+
+    Given:
+
+    When:
+
+    Then:
+
+Scenario:
+
+    Given:
+
+    When:
+
+    Then:
+
+Feature: 
+
+Scenario:
+
+    Given:
+
+    When:
+
+    Then:
+
+Scenario:
+
+    Given:
+
+    When:
+
+    Then:
+
+Feature: 
+
+Scenario:
+
+    Given:
+
+    When:
+
+    Then:
+
+Scenario:
+
+    Given:
+
+    When:
+
+    Then:
+
+Feature: 
+
+Scenario:
+
+    Given:
+
+    When:
+
+    Then:
+
+Scenario:
+
+    Given:
+
+    When:
+
+    Then:
+
+Feature: 
+
+Scenario:
+
+    Given:
+
+    When:
+
+    Then:
+
+Scenario:
+
+    Given:
+
+    When:
+
+    Then:
+
+Feature: 
+
+Scenario:
+
+    Given:
+
+    When:
+
+    Then:
+
+Scenario:
+
+    Given:
+
+    When:
+
+    Then:
+
+Feature: 
+
+Scenario:
+
+    Given:
+
+    When:
+
+    Then:
+
+Scenario:
+
+    Given:
+
+    When:
+
+    Then:
+
+Feature: 
+
+Scenario:
+
+    Given:
+
+    When:
+
+    Then:
+
+Scenario:
+
+    Given:
+
+    When:
+
+    Then:
+

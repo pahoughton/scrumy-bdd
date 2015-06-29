@@ -1,0 +1,333 @@
+2013-08-20 11:38
+Work flow, task, priorities and efforts.
+
+- decided on a version control system, historically cvs, should I convert to git
+	answer: yes - git w/ gitolite for a central repository.
+
+- hosting - what platform should the system run on
+	fedora linux
+
+- create a git central repository for all product related files.
+	git@cworld.local:ScrummyBDDHelper
+
+- start documenting features, tools and methodologies.
+	See files in doc directory.
+
+- Priority, develop tests to verify the features as soon as possible.
+
+- Priority, get a better tool than this file to track tasks.
+	Evaluate bugzilla - postponed, reading the installation instructions reminded me that my new fedora 19 system was not being backed up.
+
+- Priority: setup and test a backup system on the development environment. 
+	Considered backup-manager - rejected, limited feature set. 
+	Pursuing Bacula.
+
+	Installing bacula via yum install *bacula* - could be interesting…
+
+2013-08-21 09:03
+	yep interesting … bacula can use mysql or postgres. I chose to go with mysql, so had to get the mysql server up and running, including auto startup. Install the bacula database, set up the config. Then found out the 'yum' version of bacula was compiled with only postgres support. 
+
+	Install postgres server, auto restart, remote connections. Done. Back to initialize and config bacula
+2013-08-21 14:36
+	Running first full backup - need to test - only 11G of disk used on system, shouldn't take too long.
+	BREAK TIME :)
+2013-08-21 16:58
+	1 out of 3 not bad :) - ok have to fix giolite and postgres backups.
+
+2013-08-22 13:23 Back to work (good day at the soup kitchen - stew for 600 :)
+	testing gitolite backup now - had sudo instead of su, pops
+	also bacula-dir was not running as root, need to for the su's 
+2013-08-22 15:14
+	ok bacula tested. restore's look great. next is … double check bugzilla commitment. I'm gonna dig a bit and I have to focus on other priorities for the next 5 days.  I'll be back!
+
+2013-08-24 10:11 hmm need to list installed packages (at least the specific major's yum did the rest, but probably a good idea to add current configuration to the product's implementation documentation.
+nginx
+php-fpm - what is this? - recommended by nginx probably nginx answer to mod_php
+python2.7
+phthon3.3
+django
+gitolite
+mysql-server (mariadb-server)
+postgresql-server
+bacula
+
+2013-08-24 10:29 - 20130824.installed.packages.txt created and added to git.
+nginx config looks cool. Have enough understating to start it up.
+
+2013-08-24 11:15 nginx default page works - installing bugzilla using nginx under 
+http:://myhost.local/bugzilla
+
+yum install bugzilla # installing ton's of perl modules.
+2013-08-24 11:19 on to configuration.
+
+2013-08-24 12:11 problems with bugzilla checksetup.pl - problem boiling down to:
+
+[root@cworld bugzilla]# /usr/bin/perl -MEmail::Reply -e 'print "hi\n";
+> ^C
+[root@cworld bugzilla]# /usr/bin/perl -MEmail::Reply -e 'print "hi\n";'
+Can't locate Module/Pluggable.pm in @INC (@INC contains: /usr/local/lib64/perl5 /usr/local/share/perl5 /usr/lib64/perl5/vendor_perl /usr/share/perl5/vendor_perl /usr/lib64/perl5 /usr/share/perl5 .) at /usr/share/perl5/vendor_perl/Email/Abstract.pm line 11.
+BEGIN failed--compilation aborted at /usr/share/perl5/vendor_perl/Email/Abstract.pm line 11.
+Compilation failed in require at /usr/share/perl5/vendor_perl/Email/Reply.pm line 4.
+BEGIN failed--compilation aborted at /usr/share/perl5/vendor_perl/Email/Reply.pm line 4.
+Compilation failed in require.
+BEGIN failed--compilation aborted.
+
+going for a clan install.
+
+Problem 2 : CPAN: install Module ??? Compat
+
+2013-08-24 12:32 yum install "perl(Module::Pluggable)" was required.
+
+best answer seems to be the wrong / broken version of 
+cpan[16]> i Email::Abstract
+Module id = Email::Abstract
+    CPAN_USERID  RJBS (Ricardo SIGNES <rjbs@cpan.org>)
+    CPAN_VERSION 3.005
+    CPAN_FILE    R/RJ/RJBS/Email-Abstract-3.005.tar.gz
+    UPLOAD_DATE  2013-07-30
+    MANPAGE      Email::Abstract - unified interface to mail representations
+    INST_FILE    /usr/share/perl5/vendor_perl/Email/Abstract.pm
+    INST_VERSION 3.002
+
+
+cpan[17]> install Email::Abstract
+
+then 
+
+install Email::Reply
+
+2013-08-24 12:54 worked.
+
+now bugzilla checksetup.pl is gripping about mysql - time to setup localconfig as directed:
+
+2013-08-24 13:49 bug repot submitted to fedora project.
+
+now one to CPAN about Email::Reply failing because of Email::Abstract version.
+
+2013-08-25 08:42 installing fcgiwrap from git clone git://github.com/gnosek/fcgiwrap
+   -- wait
+2013-08-25 08:50 hmm fund yum install spawn-fcgi - looks like the same thing. Trying that first.
+
+creating /usr/local/bin/cgiwrap-fcgi.pl from http://wiki.nginx.org/SimpleCGI
+
+ sudo yum install perl-FCGI-ProcManager (needed by cgiwrap-fcgi.pl)
+
+
+2013-08-25 13:05 ugg big fun w/ security
+SELinux is preventing /usr/sbin/nginx from write access on the sock_file cgiwrap-dispatch.sock.
+
+*****  Plugin catchall (100. confidence) suggests  ***************************
+
+If you believe that nginx should be allowed write access on the cgiwrap-dispatch.sock sock_file by default.
+Then you should report this as a bug.
+You can generate a local policy module to allow this access.
+Do
+allow this access for now by executing:
+# grep nginx /var/log/audit/audit.log | audit2allow -M mypol
+# semodule -i mypol.pp
+
+
+Additional Information:
+Source Context                system_u:system_r:httpd_t:s0
+Target Context                system_u:object_r:httpd_var_lib_t:s0
+Target Objects                cgiwrap-dispatch.sock [ sock_file ]
+Source                        nginx
+Source Path                   /usr/sbin/nginx
+Port                          <Unknown>
+Host                          cworld
+Source RPM Packages           nginx-1.4.2-1.fc19.x86_64
+Target RPM Packages           
+Policy RPM                    selinux-policy-3.12.1-73.fc19.noarch
+Selinux Enabled               True
+Policy Type                   targeted
+Enforcing Mode                Enforcing
+Host Name                     cworld
+Platform                      Linux cworld 3.10.9-200.fc19.x86_64 #1 SMP Wed Aug
+                              21 19:27:58 UTC 2013 x86_64 x86_64
+Alert Count                   1
+First Seen                    2013-08-25 13:01:56 MDT
+Last Seen                     2013-08-25 13:01:56 MDT
+Local ID                      53d9fe4e-7b49-4ad4-ad2c-e2a4930940fc
+
+Raw Audit Messages
+type=AVC msg=audit(1377457316.235:569): avc:  denied  { write } for  pid=3143 comm="nginx" name="cgiwrap-dispatch.sock" dev="dm-1" ino=2883857 scontext=system_u:system_r:httpd_t:s0 tcontext=system_u:object_r:httpd_var_lib_t:s0 tclass=sock_file
+
+
+type=SYSCALL msg=audit(1377457316.235:569): arch=x86_64 syscall=connect success=no exit=EACCES a0=4 a1=7fca013fe568 a2=6e a3=7fffd1f76273 items=0 ppid=3081 pid=3143 auid=4294967295 uid=990 gid=989 euid=990 suid=990 fsuid=990 egid=989 sgid=989 fsgid=989 ses=4294967295 tty=(none) comm=nginx exe=/usr/sbin/nginx subj=system_u:system_r:httpd_t:s0 key=(null)
+
+Hash: nginx,httpd_t,httpd_var_lib_t,sock_file,write
+
+
+yum install /usr/bin/audit2allow # worked
+
+2013-08-25 15:23 cgiwrap-fcgi NOT working :( - going to try fastcgi-wrapper.
+
+Just can't seem to get cgiwrap-fcgi to run bugzilla. fastcgi-wrapper is actually the same script as cgiwrap. Now trying with fcgiwrap https://github.com/gnosek/fcgiwrap
+
+2013-08-26 08:12 was working on fcgiwrap.service and decided time to learn all about systemd (linux initialization) 
+http://www.freedesktop.org/wiki/Software/systemd/
+
+2013-08-26 08:40 now he is getting it. It is truly time to write my own fastcgi wrapper service using python and working efficiently with systemd. 
+
+Feature given a fastcgi script request, run the cgi script.
+
+2013-08-26 09:25 partial success - bugzilla index page actually visible - LOTS of issues, but progress.
+2013-08-26 10:37 bugzilla is up and running under http:://host/bugzilla/index.cgi
+
+Lots to FIXME - change fastcgi to use systemd socket interface.
+
+Look for configuration / startup / performance improvements.
+
+2013-08-26 12:37 Ugg that took hours. home page http://cworld.local/bugzilla was not working. issue with configuring nginx. works now.
+
+2013-08-26 15:06 breaking my own rule already. I should be working on the testing of the current system, but I want to wait to understand jenkins through trial and error (and reading) before I start writing tests. At least I've already started writing BDD features :)
+
+
+2013-08-26 17:00 last night's backup failed, causing issues with integrating jenkins. time to fix it. Would be nice to integrate bacula with bugzilla.
+
+2013-08-27 09:51 I've been studying systemd some more and thinking about the production level system setup and installation. This should be part of the tests. Build a system from scratch, automatically. Start it up, verify all operations against that new system. The process should work for both virtual machines and real bare bones hardware.
+
+2013-08-27 10:26 systemd lead me to libvirt and puppet. Doing some research on Virtual Machine. I believe testing should be performed on a virtual machine. It strengthens the production environment setup process.
+
+2013-08-27 11:01 yep time to learn puppet. Reasoning, I want to be able to create a dev/test/prod environment with a single command.  This process will be implemented using continuous integration and BDD.
+
+Spending time to understand puppet will increase my understanding of effective system configuration.
+
+2013-08-27 11:33 Need to install a VM system to learn puppet to configure a VM. So installing Xen.
+
+yum install xen - YAY! :)
+
+https://fedoraproject.org/wiki/Archive:Tools/Xen?rd=FedoraXenQuickstart - perfect
+
+Downloaded centOS-6.4-x86_64-minimal.iso
+
+2013-08-27 13:17 ok here's the plan. Break first …
+Create a Logical partition to hold my new CentOS install. use Xen to run the centOS-install ISO and tell it to install to my new partition - will have to be visible to install process as a viable partition. Once that works (take a while i bet) then boot my new centOS system and start installing packages and performing configuration via puppet.
+
+Then create a VM image to be used by the test system and test will make the production installation process.
+
+Looks like I have test to write:
+
+Feature: test are executed on a virtual machine
+
+  Scenario: test need to be run
+     Given: the test virtual machine is not available.
+      When: tests are run
+      Then: the test virtual environment is available.
+       And: the test proceed.
+
+
+2013-08-27 14:16 Ugg reboot did not use the correct boot image for xen - fixing …
+
+2013-08-27 14:28 time to learn all about fedora boot and grub2
+
+2013-08-28 06:12 been at it for some time this morn. Got grub figured out. Xen kernel running, logical volume testvm created, time to get a vm running (I hope).
+
+2013-08-28 06:23 ugg just found 'fedora 19 virtualization doc' this might change things …
+nope - just pushed virsh over xl. back to setting up my vm
+
+2013-08-28 14:17 ARG been fighting all day and now I learn that red hat is going to KVM. ok time to get KVM working. At least I've been spending most of my time getting a bare bonds CentOS 6.4 kernel ready. Made it through first step - installed on a partition, but may have to do that all over again. UGG these inflexible installation processes!@
+
+The CentOS install to the USB drive should have provided full EFI config option. uggg.
+
+
+http://centos.icyboards.com/6.4/isos/x86_64/CentOS-6.4-x86_64-netinstall.iso
+http://mirrordenver.fdcservers.net/centos/6.4/os/x86_64/
+
+2013-08-29 06:20 all sorts of issues this morning - bacula did not back up and did not report
+
+bugzilla not working because fast cgi socket was not there - heck the /var/run/nginx directory disappeared. Sure like to know how that got removed.
+
+YUCK MORE BUGS
+
+Now can't get windows clipboard :(
+Aug 26 17:14:24 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:24 2013] jsonrpc.cgi: Compilation failed in require at /usr/share/bugzilla/jsonrpc.cgi line 35.
+Aug 26 17:14:24 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:24 2013] jsonrpc.cgi: BEGIN failed--compilation aborted at /usr/share/bugzilla/jsonrpc.cgi line 35.
+Aug 26 17:14:25 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:25 2013] jsonrpc.cgi: Can't locate JSON/RPC/Legacy/Server/CGI.pm in @INC (@INC contains: . lib /usr/local/lib64/perl5 /usr/local/share/perl5 /usr/lib64/perl5/vendor_perl /usr/share/perl5/vendor_perl /usr/lib64/perl5 /usr/share/perl5) at Bugzilla/WebService/Server/JSONRPC.pm line 33.
+Aug 26 17:14:25 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:25 2013] jsonrpc.cgi: BEGIN failed--compilation aborted at Bugzilla/WebService/Server/JSONRPC.pm line 36.
+Aug 26 17:14:25 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:25 2013] jsonrpc.cgi: Compilation failed in require at /usr/share/bugzilla/jsonrpc.cgi line 35.
+Aug 26 17:14:25 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:25 2013] jsonrpc.cgi: BEGIN failed--compilation aborted at /usr/share/bugzilla/jsonrpc.cgi line 35.
+Aug 26 17:14:25 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:25 2013] jsonrpc.cgi: Can't locate JSON/RPC/Legacy/Server/CGI.pm in @INC (@INC contains: . lib /usr/local/lib64/perl5 /usr/local/share/perl5 /usr/lib64/perl5/vendor_perl /usr/share/perl5/vendor_perl /usr/lib64/perl5 /usr/share/perl5) at Bugzilla/WebService/Server/JSONRPC.pm line 33.
+Aug 26 17:14:25 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:25 2013] jsonrpc.cgi: BEGIN failed--compilation aborted at Bugzilla/WebService/Server/JSONRPC.pm line 36.
+Aug 26 17:14:25 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:25 2013] jsonrpc.cgi: Compilation failed in require at /usr/share/bugzilla/jsonrpc.cgi line 35.
+Aug 26 17:14:25 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:25 2013] jsonrpc.cgi: BEGIN failed--compilation aborted at /usr/share/bugzilla/jsonrpc.cgi line 35.
+Aug 26 17:14:27 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:27 2013] jsonrpc.cgi: Can't locate JSON/RPC/Legacy/Server/CGI.pm in @INC (@INC contains: . lib /usr/local/lib64/perl5 /usr/local/share/perl5 /usr/lib64/perl5/vendor_perl /usr/share/perl5/vendor_perl /usr/lib64/perl5 /usr/share/perl5) at Bugzilla/WebService/Server/JSONRPC.pm line 33.
+Aug 26 17:14:27 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:27 2013] jsonrpc.cgi: BEGIN failed--compilation aborted at Bugzilla/WebService/Server/JSONRPC.pm line 36.
+Aug 26 17:14:27 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:27 2013] jsonrpc.cgi: Compilation failed in require at /usr/share/bugzilla/jsonrpc.cgi line 35.
+Aug 26 17:14:27 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:27 2013] jsonrpc.cgi: BEGIN failed--compilation aborted at /usr/share/bugzilla/jsonrpc.cgi line 35.
+Aug 26 17:14:28 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:28 2013] jsonrpc.cgi: Can't locate JSON/RPC/Legacy/Server/CGI.pm in @INC (@INC contains: . lib /usr/local/lib64/perl5 /usr/local/share/perl5 /usr/lib64/perl5/vendor_perl /usr/share/perl5/vendor_perl /usr/lib64/perl5 /usr/share/perl5) at Bugzilla/WebService/Server/JSONRPC.pm line 33.
+Aug 26 17:14:28 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:28 2013] jsonrpc.cgi: BEGIN failed--compilation aborted at Bugzilla/WebService/Server/JSONRPC.pm line 36.
+Aug 26 17:14:28 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:28 2013] jsonrpc.cgi: Compilation failed in require at /usr/share/bugzilla/jsonrpc.cgi line 35.
+Aug 26 17:14:28 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:28 2013] jsonrpc.cgi: BEGIN failed--compilation aborted at /usr/share/bugzilla/jsonrpc.cgi line 35.
+Aug 26 17:14:28 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:28 2013] jsonrpc.cgi: Can't locate JSON/RPC/Legacy/Server/CGI.pm in @INC (@INC contains: . lib /usr/local/lib64/perl5 /usr/local/share/perl5 /usr/lib64/perl5/vendor_perl /usr/share/perl5/vendor_perl /usr/lib64/perl5 /usr/share/perl5) at Bugzilla/WebService/Server/JSONRPC.pm line 33.
+Aug 26 17:14:28 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:28 2013] jsonrpc.cgi: BEGIN failed--compilation aborted at Bugzilla/WebService/Server/JSONRPC.pm line 36.
+Aug 26 17:14:28 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:28 2013] jsonrpc.cgi: Compilation failed in require at /usr/share/bugzilla/jsonrpc.cgi line 35.
+Aug 26 17:14:28 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:28 2013] jsonrpc.cgi: BEGIN failed--compilation aborted at /usr/share/bugzilla/jsonrpc.cgi line 35.
+Aug 26 17:14:29 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:29 2013] jsonrpc.cgi: Can't locate JSON/RPC/Legacy/Server/CGI.pm in @INC (@INC contains: . lib /usr/local/lib64/perl5 /usr/local/share/perl5 /usr/lib64/perl5/vendor_perl /usr/share/perl5/vendor_perl /usr/lib64/perl5 /usr/share/perl5) at Bugzilla/WebService/Server/JSONRPC.pm line 33.
+Aug 26 17:14:29 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:29 2013] jsonrpc.cgi: BEGIN failed--compilation aborted at Bugzilla/WebService/Server/JSONRPC.pm line 36.
+Aug 26 17:14:29 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:29 2013] jsonrpc.cgi: Compilation failed in require at /usr/share/bugzilla/jsonrpc.cgi line 35.
+Aug 26 17:14:29 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:29 2013] jsonrpc.cgi: BEGIN failed--compilation aborted at /usr/share/bugzilla/jsonrpc.cgi line 35.
+Aug 26 17:14:29 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:29 2013] jsonrpc.cgi: Can't locate JSON/RPC/Legacy/Server/CGI.pm in @INC (@INC contains: . lib /usr/local/lib64/perl5 /usr/local/share/perl5 /usr/lib64/perl5/vendor_perl /usr/share/perl5/vendor_perl /usr/lib64/perl5 /usr/share/perl5) at Bugzilla/WebService/Server/JSONRPC.pm line 33.
+Aug 26 17:14:29 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:29 2013] jsonrpc.cgi: BEGIN failed--compilation aborted at Bugzilla/WebService/Server/JSONRPC.pm line 36.
+Aug 26 17:14:29 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:29 2013] jsonrpc.cgi: Compilation failed in require at /usr/share/bugzilla/jsonrpc.cgi line 35.
+Aug 26 17:14:29 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:29 2013] jsonrpc.cgi: BEGIN failed--compilation aborted at /usr/share/bugzilla/jsonrpc.cgi line 35.
+Aug 26 17:14:31 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:31 2013] jsonrpc.cgi: Can't locate JSON/RPC/Legacy/Server/CGI.pm in @INC (@INC contains: . lib /usr/local/lib64/perl5 /usr/local/share/perl5 /usr/lib64/perl5/vendor_perl /usr/share/perl5/vendor_perl /usr/lib64/perl5 /usr/share/perl5) at Bugzilla/WebService/Server/JSONRPC.pm line 33.
+Aug 26 17:14:31 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:31 2013] jsonrpc.cgi: BEGIN failed--compilation aborted at Bugzilla/WebService/Server/JSONRPC.pm line 36.
+Aug 26 17:14:31 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:31 2013] jsonrpc.cgi: Compilation failed in require at /usr/share/bugzilla/jsonrpc.cgi line 35.
+Aug 26 17:14:31 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:31 2013] jsonrpc.cgi: BEGIN failed--compilation aborted at /usr/share/bugzilla/jsonrpc.cgi line 35.
+Aug 26 17:14:32 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:32 2013] jsonrpc.cgi: Can't locate JSON/RPC/Legacy/Server/CGI.pm in @INC (@INC contains: . lib /usr/local/lib64/perl5 /usr/local/share/perl5 /usr/lib64/perl5/vendor_perl /usr/share/perl5/vendor_perl /usr/lib64/perl5 /usr/share/perl5) at Bugzilla/WebService/Server/JSONRPC.pm line 33.
+Aug 26 17:14:32 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:32 2013] jsonrpc.cgi: BEGIN failed--compilation aborted at Bugzilla/WebService/Server/JSONRPC.pm line 36.
+Aug 26 17:14:32 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:32 2013] jsonrpc.cgi: Compilation failed in require at /usr/share/bugzilla/jsonrpc.cgi line 35.
+Aug 26 17:14:32 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:32 2013] jsonrpc.cgi: BEGIN failed--compilation aborted at /usr/share/bugzilla/jsonrpc.cgi line 35.
+Aug 26 17:14:32 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:32 2013] jsonrpc.cgi: Can't locate JSON/RPC/Legacy/Server/CGI.pm in @INC (@INC contains: . lib /usr/local/lib64/perl5 /usr/local/share/perl5 /usr/lib64/perl5/vendor_perl /usr/share/perl5/vendor_perl /usr/lib64/perl5 /usr/share/perl5) at Bugzilla/WebService/Server/JSONRPC.pm line 33.
+Aug 26 17:14:32 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:32 2013] jsonrpc.cgi: BEGIN failed--compilation aborted at Bugzilla/WebService/Server/JSONRPC.pm line 36.
+Aug 26 17:14:32 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:32 2013] jsonrpc.cgi: Compilation failed in require at /usr/share/bugzilla/jsonrpc.cgi line 35.
+Aug 26 17:14:32 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:32 2013] jsonrpc.cgi: BEGIN failed--compilation aborted at /usr/share/bugzilla/jsonrpc.cgi line 35.
+Aug 26 17:14:32 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:32 2013] jsonrpc.cgi: Can't locate JSON/RPC/Legacy/Server/CGI.pm in @INC (@INC contains: . lib /usr/local/lib64/perl5 /usr/local/share/perl5 /usr/lib64/perl5/vendor_perl /usr/share/perl5/vendor_perl /usr/lib64/perl5 /usr/share/perl5) at Bugzilla/WebService/Server/JSONRPC.pm line 33.
+Aug 26 17:14:32 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:32 2013] jsonrpc.cgi: BEGIN failed--compilation aborted at Bugzilla/WebService/Server/JSONRPC.pm line 36.
+Aug 26 17:14:32 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:32 2013] jsonrpc.cgi: Compilation failed in require at /usr/share/bugzilla/jsonrpc.cgi line 35.
+Aug 26 17:14:32 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:32 2013] jsonrpc.cgi: BEGIN failed--compilation aborted at /usr/share/bugzilla/jsonrpc.cgi line 35.
+Aug 26 17:14:32 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:32 2013] jsonrpc.cgi: Can't locate JSON/RPC/Legacy/Server/CGI.pm in @INC (@INC contains: . lib /usr/local/lib64/perl5 /usr/local/share/perl5 /usr/lib64/perl5/vendor_perl /usr/share/perl5/vendor_perl /usr/lib64/perl5 /usr/share/perl5) at Bugzilla/WebService/Server/JSONRPC.pm line 33.
+Aug 26 17:14:32 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:32 2013] jsonrpc.cgi: BEGIN failed--compilation aborted at Bugzilla/WebService/Server/JSONRPC.pm line 36.
+Aug 26 17:14:32 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:32 2013] jsonrpc.cgi: Compilation failed in require at /usr/share/bugzilla/jsonrpc.cgi line 35.
+Aug 26 17:14:32 cworld fcgiwrap[23904]: [Mon Aug 26 17:14:32 2013] jsonrpc.cgi: BEGIN failed--compilation aborted at /usr/share/bugzilla/jsonrpc.cgi line 35.
+
+FINALLY. time to restart x and the laptop - looks like a busy day.
+
+2013-08-29 06:45 bugzilla works again - restarted fcgiwrap service after creating /var/run/nginx dir.
+
+NOPE pip-3 (and 2.7) need to install requests - I'm using it in my testing.
+lets just use urllib for now pretty simple tests so far.
+
+installed gitpython
+
+yum install GitPython
+
+2013-08-31 08:57 lots of folks seem to be using Trac. and I'm seeing some integration with Jenkins. Adding it as a component.
+
+2013-08-31 14:10 ok, in installing Trac, I saw all the system configuration tasks that have to be performed. I've heard that puppet is very good at this (btw it's ruby) and it is probably the best solution at being able to reproduce the services on random hosts.
+
+First step - hmmm ….
+[root@cworld etc]# yum info puppet
+Loaded plugins: langpacks, refresh-packagekit
+Available Packages
+Name        : puppet
+Arch        : noarch
+Version     : 3.1.1
+Release     : 7.fc19
+Size        : 901 k
+Repo        : updates/19/x86_64
+Summary     : A network tool for managing many disparate systems
+URL         : http://puppetlabs.com
+License     : ASL 2.0
+Description : Puppet lets you centrally manage every important aspect of your
+            : system using a cross-platform specification language that manages
+            : all the separate elements normally aggregated in different files,
+            : like users, cron jobs, and hosts, along with obviously discrete
+            : elements like packages, services, and files.
+
+yum install puppet
+
+n2620g
+
+sudo gem install puppet
