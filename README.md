@@ -1,9 +1,16 @@
-## Scrumy BDD
+## wirde
 
-Please see [wiki](https://github.com/pahoughton/scrumy-bdd/wiki) for
-Detailed documentation.
+W?
+Integrated
+Reproducible
+Development
+Environment
 
 ### The Vision
+
+Fully integrated CI based validation environment.
+
+GoCD Install
 
 A tool set for all project members to collaborate on all aspects
 of a software system that utilizes

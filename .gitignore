@@ -16,3 +16,4 @@ aclocal.m4
 test.out
 make.out
 ignore.out
+.vagrant
